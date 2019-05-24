@@ -1,14 +1,13 @@
 public class Personne {
-    private String adresse; 
+    private String adresse;
     private String telephone;
     private String email;
-
 
     public String getAdresse() {
         return adresse;
     }
 
-    public void setAdresse( String adresse) {
+    public void setAdresse(String adresse) {
         this.adresse = adresse;
     }
 
@@ -29,4 +28,3 @@ public class Personne {
     }
 
 }
-
