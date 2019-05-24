@@ -38,5 +38,4 @@ public class Terminal extends Materiel {
         this.yResolution = yResolution;
     }
 
-
 }

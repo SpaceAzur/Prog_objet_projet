@@ -6,14 +6,14 @@ public class Materiel {
         NEUF, USE, ABIME, PANNE;
     }
 
-    private Personne proprietaire;
-    private String UUID;
-    private String modele;
-    private String marque;
-    private double prixAchat;
-    private Date dateAchat;
-    private Etat etat;
-    private String[] connectique;
+    protected Personne proprietaire;
+    protected String UUID;
+    protected String modele;
+    protected String marque;
+    protected double prixAchat;
+    protected Date dateAchat;
+    protected Etat etat;
+    protected String[] connectique;
 
     public Personne getProprietaire() {
         return this.proprietaire;
