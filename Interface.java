@@ -1,17 +1,24 @@
 public class Interface {
 
-    private Controleur ctrl;
+    private Modele mod;
 
-    public void setControleur(Controleur ctrl) {
-        this.ctrl=ctrl;
+    public void setModele(Modele mod) {
+        this.mod=mod;
     }
 
     public void go() {
 
         System.out.println("Bienvenue dans A38 !");
         System.out.println("What do you wanna dooooo ?");
-        ctrl.getMateriels().add(new Materiel())
+        showChoices();
     
     }
 
+    public void getInput() {
+
+    }
+
+    public void showChoices() {
+
+    }
 }
