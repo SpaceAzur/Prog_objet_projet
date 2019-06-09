@@ -1,11 +1,14 @@
+
 public class A38 {
 
     public static void main(String[] args) {
 
-        Interface cmd = new Interface();
         Modele mod = new Modele();
-        cmd.setModele(mod);
-        cmd.go();
+        Personne p1 = new PersonnePhysique("Pierre", "Danel", "étudiant");
+        mod.getEmprunts().add(new Emprunt(p1));
+
+        Interface gui = new Interface(mod);
+        gui.showMateriel();
 
     }
 

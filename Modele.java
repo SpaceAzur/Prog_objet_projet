@@ -9,25 +9,31 @@ public class Modele {
     ArrayList<Utilisateur> utilisateurs;
 
     public Modele() {
-        // Fetch from DB
+        emprunts=new ArrayList<Emprunt>();
     }
 
     public ArrayList<Emprunt> getEmprunts() {
         return this.emprunts;
     }
 
-    public ArrayList<Emprunt> getEmprunts(Personne p) {
+    public ArrayList<Emprunt> getEmprunts(Personne emprunteur) {
         ArrayList<Emprunt> result = new ArrayList<Emprunt>();
         for (int i = 0; i < emprunts.size(); i++) {
-            if (emprunts.get(i).getEmprunteur() == p) {
+            if (emprunts.get(i).getEmprunteur() == emprunteur) {
                 result.add(emprunts.get(i));
             }
         }
         return result;
     }
 
-    public ArrayList<Emprunt> getEmprunts(boolean b) {
-        
+    public ArrayList<Emprunt> getEmprunts(boolean isRendu) {
+        ArrayList<Emprunt> result = new ArrayList<Emprunt>();
+        for (int i = 0; i < emprunts.size(); i++) {
+            if (emprunts.get(i).isRendu() == isRendu) {
+                result.add(emprunts.get(i));
+            }
+        }
+        return result;
     }
 
     public ArrayList<Materiel> getMateriels() {

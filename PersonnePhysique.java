@@ -1,7 +1,18 @@
 public class PersonnePhysique extends Personne {
     protected String prenom;
     protected String nom;
-    protected enum status {etudiant, enseignant, enseignant_chercheur, chercheur}
+    protected String status;
+
+    @Override
+    public String toString() {
+        return this.prenom + " " + this.nom + " (" + this.status + ")";
+    }
+
+    public PersonnePhysique(String prenom, String nom, String status) {
+        this.prenom=prenom;
+        this.nom=nom;
+        this.status=status;
+    }
 
     public String getPrenom() {
         return prenom;
