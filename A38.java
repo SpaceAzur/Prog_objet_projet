@@ -8,7 +8,6 @@ public class A38 {
         mod.getEmprunts().add(new Emprunt(p1));
 
         Interface gui = new Interface(mod);
-        gui.showMateriel();
 
     }
 

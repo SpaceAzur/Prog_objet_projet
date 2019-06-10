@@ -1,7 +1,6 @@
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.swing.table.*;
 
 public class Interface {
 
@@ -10,35 +9,17 @@ public class Interface {
     JPanel center;
     JPanel side;
     Modele mod;
+    
+    public MenuItem currentMenu;
 
-    Font titleFont = new Font("Verdana", Font.BOLD, 50);
-    Font menuFont = new Font("Verdana", Font.PLAIN, 25);
-    Font headerFont = new Font("Verdana", Font.BOLD, 15);
-    Font tableFont = new Font("Verdana", Font.PLAIN, 15);
-    Color yellow = new Color(242, 190, 84);
-    Color blue = new Color(21, 62, 92);
-    Color lightBlue = new Color(135, 174, 180);
+    public Font titleFont = new Font("Verdana", Font.BOLD, 50);
+    public Font menuFont = new Font("Verdana", Font.PLAIN, 25);
+    public Font headerFont = new Font("Verdana", Font.BOLD, 15);
+    public Font tableFont = new Font("Verdana", Font.PLAIN, 15);
 
-    public class SimpleHeaderRenderer extends JLabel implements TableCellRenderer {
- 
-        public SimpleHeaderRenderer() {
-            setFont(headerFont);
-            setForeground(Color.WHITE);
-            setBackground(blue);
-            setOpaque(true);
-            setHorizontalAlignment(JLabel.CENTER);
-            setBorder(BorderFactory.createMatteBorder(0, 1, 1, 2, yellow));
-        }
-         
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value,
-                boolean isSelected, boolean hasFocus, int row, int column) {
-            setText(value.toString());
-
-            return this;
-        }
-     
-    }
+    public Color yellow = new Color(242, 190, 84);
+    public Color blue = new Color(21, 62, 92);
+    public Color lightBlue = new Color(135, 174, 180);
 
     public Interface(Modele mod) {
 
@@ -73,7 +54,7 @@ public class Interface {
         side.setSize(500,900);
         side.setBackground(blue);
         side.setLayout(null);
-        side.setBorder(BorderFactory.createMatteBorder(0, 3, 0, 0, yellow));
+        side.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, yellow));
 
     }
 
@@ -87,34 +68,69 @@ public class Interface {
 
     }
 
-    public void showMateriel() {
+    public void showPersonnes() {
+
+        center.removeAll();
 
         String[] colonnes = { "Prénom", "Nom", "Statut" };
         Object[][] data = { { "Pierre", "Danel", "étudiant" }, { "Antoine", "Escobar", "étudiant" } };
+       
+        CenterTable table = new CenterTable(data, colonnes, this);
 
-        JTable table = new JTable(data, colonnes) {
-            @Override
-            public boolean isCellEditable(int iRowIndex, int iColumnIndex) {
-                return false;
-            }
-            @Override
-            public Component prepareRenderer( TableCellRenderer renderer, int row, int column) {
-                JComponent jc = (JComponent)super.prepareRenderer(renderer, row, column);
-                jc.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(yellow, 1), BorderFactory.createEmptyBorder(0, 10, 0, 10)));
-                return jc;
-            }
+        JScrollPane panneau = new JScrollPane(table);
+        panneau.setSize(950, 900);
+        panneau.setBorder(new LineBorder(yellow, 1));
+        panneau.setLocation(0, 0);
 
-        };
-        table.setRowHeight(35);
-        table.setGridColor(yellow);
-        table.setFont(tableFont);
-        table.setBackground(lightBlue);
-        table.setSelectionBackground(blue);
-        table.setSelectionForeground(Color.WHITE);
-        table.setFillsViewportHeight(true);
-        table.getTableHeader().setDefaultRenderer(new SimpleHeaderRenderer());
-        table.getTableHeader().setPreferredSize(new Dimension(100, 35));
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        center.add(panneau);
+
+    }
+
+    public void showMateriel() {
+
+        center.removeAll();
+
+        String[] colonnes = { "Marque", "Nom", "Etat" };
+        Object[][] data = { { "Samsung", "Galaxy S10+", "Fonctionnel" }, { "Apple", "iPhone XS", "En panne" } };
+
+        CenterTable table = new CenterTable(data, colonnes, this);
+
+        JScrollPane panneau = new JScrollPane(table);
+        panneau.setSize(950, 900);
+        panneau.setBorder(new LineBorder(yellow, 1));
+        panneau.setLocation(0, 0);
+
+        center.add(panneau);
+
+    }
+
+    
+    public void showEmprunts() {
+
+        center.removeAll();
+
+        String[] colonnes = { "Emprunteur", "Institution", "Statut" };
+        Object[][] data = { { "Tellier", "UEVE", "En cours" }, { "Bouyer", "ENSiiE", "Terminé" } };
+
+        CenterTable table = new CenterTable(data, colonnes, this);
+
+        JScrollPane panneau = new JScrollPane(table);
+        panneau.setSize(950, 900);
+        panneau.setBorder(new LineBorder(yellow, 1));
+        panneau.setLocation(0, 0);
+
+        center.add(panneau);
+
+    }
+
+    public void showBatiments() {
+
+        center.removeAll();
+        
+        String[] colonnes = { "Nom", "Adresse", "Propriétaire", "Responsable" };
+        Object[][] data = { { "ENSiiE Evry", "Square de la résistance", "ENSiiE", "Tellier" }, { "IBISC", "Evry", "UEVE", "Bouyer" } };
+
+        CenterTable table = new CenterTable(data, colonnes, this);
 
         JScrollPane panneau = new JScrollPane(table);
         panneau.setSize(950, 900);
@@ -132,7 +148,9 @@ public class Interface {
         menu.setSize(150, 900);
         menu.setBackground(blue);
         menu.setLayout(null);
-        menu.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 3, yellow));
+        menu.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, yellow));
+
+        MenuControl mctrl = new MenuControl(this);
 
         JLabel a38 = new JLabel(" A38");
         a38.setLocation(0, 0);
@@ -140,22 +158,22 @@ public class Interface {
         a38.setFont(titleFont);
         a38.setForeground(yellow);
 
-        JPanel materiel = new JPanel();
+        MenuItem materiel = new MenuItem("materiel", mctrl);
         materiel.setLocation(0, 100);
         materiel.setSize(150, 40);
         materiel.setBackground(yellow);
 
-        JPanel emprunts = new JPanel();
+        MenuItem emprunts = new MenuItem("emprunts", mctrl);
         emprunts.setLocation(0, 155);
         emprunts.setSize(150, 40);
         emprunts.setBackground(yellow);
 
-        JPanel personnes = new JPanel();
+        MenuItem personnes = new MenuItem("personnes", mctrl);
         personnes.setLocation(0, 210);
         personnes.setSize(150, 40);
         personnes.setBackground(yellow);
 
-        JPanel batiments = new JPanel();
+        MenuItem batiments = new MenuItem("batiments", mctrl);
         batiments.setLocation(0, 265);
         batiments.setSize(150, 40);
         batiments.setBackground(yellow);
