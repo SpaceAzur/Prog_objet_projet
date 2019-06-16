@@ -69,7 +69,7 @@ public class Modele {
                 String telephone = rs.getString("telephone");                
                 String email = rs.getString("email");
                 
-                physiques.put(id, new Individu(id, prenom, nom, status, adresse, telephone, email));
+                individus.put(id, new Individu(id, prenom, nom, status, adresse, telephone, email));
             }
 
         } catch (Exception e) {
