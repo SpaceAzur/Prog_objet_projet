@@ -189,6 +189,10 @@ public class Modele {
         return this.individus;
     }
 
+    public Individu getIndividu(int id) {
+        return individus.get(id);
+    }
+
     public ArrayList<Individu> getIndividus(String src, int id) {
 
         if (src==null && id==0) return new ArrayList<Individu>(individus.values());

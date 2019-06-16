@@ -294,7 +294,7 @@ public class Interface {
 
         side.removeAll();
 
-        Individu individu = mod.getIndividus().get(id);
+        Individu individu = mod.getIndividu(id);
 
         JLabel identite = new JLabel(individu.getPrenom() + " " + individu.getNom());
         identite.setFont(sideTitleFont);
