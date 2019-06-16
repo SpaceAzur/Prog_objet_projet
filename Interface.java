@@ -154,6 +154,40 @@ public class Interface {
 
     }
 
+    public void showIndividus(String src, int id) {
+
+        center.removeAll();
+
+        String[] colonnes = { "ID", "Prénom", "Nom", "Status" };
+        ArrayList<Individu> individus = mod.getIndividus(src,id);
+        String[][] data = new String[individus.size()][4];
+
+        int i = 0;
+
+        for (Individu val : individus) {
+
+            data[i][0] = Integer.toString(val.getId());
+            data[i][1] = val.getPrenom();
+            data[i][2] = val.getNom();
+            data[i][3] = val.getStatus();
+            i++;
+
+        }
+
+        CenterTable table = new CenterTable(data, colonnes, this, "Personnes");
+        table.addMouseListener(tableCtrl);
+
+        JScrollPane panneau = new JScrollPane(table);
+        panneau.setSize(CENTER, HEIGHT - TOPBAR);
+        panneau.setBorder(new LineBorder(yellow, 1));
+        panneau.setLocation(0, 0);
+
+        changeTitle("Liste des personnes");
+
+        center.add(panneau);
+
+    }
+
     public void showMateriel(String src, int id) {
 
         center.removeAll();
@@ -241,7 +275,7 @@ public class Interface {
         SideLabel idl = new SideLabel("ID : " + morale.getId(), this, 50, 150);
         SideLabel adresse = new SideLabel("<html>Adresse : <br>" + morale.getAdresse() + "</html>", this, 50, 200);
         SideLabel email = new SideLabel("<html>Mail : <br>" + morale.getEmail() + "</html>", this, 50, 280);
-        SideLabel telephone = new SideLabel("Tel : ", this, 50, 360);
+        SideLabel telephone = new SideLabel("Tel : " + morale.getTelephone(), this, 50, 360);
 
         SideButton materiel = new SideButton("Institutions", menu.materiels, id, this, 25, 450);
         SideButton emprunts = new SideButton("Institutions", menu.emprunts, id, this, 215, 450);
@@ -256,11 +290,43 @@ public class Interface {
 
     }
 
+    public void showSidePers(int id) {
+
+        side.removeAll();
+
+        Individu individu = mod.getIndividus().get(id);
+
+        JLabel identite = new JLabel(individu.getPrenom() + " " + individu.getNom());
+        identite.setFont(sideTitleFont);
+        identite.setForeground(Color.WHITE);
+        identite.setSize(identite.getPreferredSize());
+        identite.setLocation(SIDE / 2 - identite.getWidth() / 2, 50);
+        side.add(identite);
+
+        SideLabel idl = new SideLabel("ID : " + individu.getId(), this, 50, 150);
+        SideLabel status = new SideLabel("Status : " + individu.getStatus(), this, 50, 200);
+        SideLabel adresse = new SideLabel("<html>Adresse : <br>" + individu.getAdresse() + "</html>", this, 50, 250);
+        SideLabel email = new SideLabel("<html>Mail : <br>" + individu.getEmail() + "</html>", this, 50, 330);
+        SideLabel telephone = new SideLabel("Tel : " + individu.getTelephone(), this, 50, 410);
+
+        /*SideButton materiel = new SideButton("Institutions", menu.materiels, id, this, 25, 450);
+        SideButton emprunts = new SideButton("Institutions", menu.emprunts, id, this, 215, 450);
+        SideButton batiments = new SideButton("Institutions", menu.batiments, id, this, 25, 560);
+        SideButton personnes = new SideButton("Institutions", menu.personnes, id, this, 215, 560);
+
+        DeleteButton delete = new DeleteButton(morale);
+        delete.addMouseListener(delCtrl);
+        side.add(delete);*/
+
+        side.repaint();
+
+    }
+
     public void showSideMat(int id) {
 
         side.removeAll();
 
-        Materiel matos = mod.getMateriels().get(id);
+        Materiel matos = mod.getMateriels(null,0).get(id);
 
         JLabel mat = new JLabel(matos.getModele());
         mat.setFont(sideTitleFont);

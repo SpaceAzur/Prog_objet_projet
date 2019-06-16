@@ -1,19 +1,21 @@
 public class Individu extends Personne {
-    
+
     protected String prenom;
     protected String nom;
     protected String status;
+    protected Institution institution;
 
     @Override
     public String toString() {
         return this.prenom + " " + this.nom + " (" + this.status + ")";
     }
 
-    public Individu(int id, String prenom, String nom, String status, String adresse, String telephone, String email) {
+    public Individu(int id, String prenom, String nom, String status, String adresse, String telephone, String email, Institution institution) {
         super(id, adresse, telephone, email);
         this.prenom=prenom;
         this.nom=nom;
         this.status=status;
+        this.institution=institution;
     }
 
     public String getPrenom() {
@@ -30,6 +32,14 @@ public class Individu extends Personne {
 
     public void setNom(String nom) {
         this.nom = nom;
+    }
+
+    public String getStatus() {
+        return this.status;
+    }
+
+    public Institution getInstitution() {
+        return this.institution;
     }
 
     

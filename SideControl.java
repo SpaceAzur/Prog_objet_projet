@@ -17,9 +17,17 @@ public class SideControl implements MouseListener {
 
             String newTitle="";
 
-            if (item.getDst().getName().equals("Matériels")) {
+            String dst=item.getDst().getName();
+            String src=item.getSrc();
+
+            if (dst.equals("Matériels")) {
                 interf.showMateriel(item.getSrc(), item.getId());
-                if (item.getSrc().equals("Institutions")) newTitle="Matériels de " + interf.mod.getInstitutions().get(item.getId()).getRaisonSociale();
+                if (src.equals("Institutions")) newTitle="Matériels de " + interf.mod.getInstitutions().get(item.getId()).getRaisonSociale();
+                interf.changeTitle(newTitle);
+            } 
+            else if (dst.equals("Personnes")) {
+                interf.showIndividus(item.getSrc(), item.getId());
+                if (src.equals("Institutions")) newTitle="Personnes liées à " + interf.mod.getInstitutions().get(item.getId()).getRaisonSociale();
                 interf.changeTitle(newTitle);
             }
 

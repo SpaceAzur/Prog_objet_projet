@@ -68,8 +68,9 @@ public class Modele {
                 String adresse = rs.getString("adresse");                
                 String telephone = rs.getString("telephone");                
                 String email = rs.getString("email");
+                int idInstitution = rs.getInt("institution");
                 
-                individus.put(id, new Individu(id, prenom, nom, status, adresse, telephone, email));
+                individus.put(id, new Individu(id, prenom, nom, status, adresse, telephone, email, institutions.get(idInstitution)));
             }
 
         } catch (Exception e) {
@@ -157,10 +158,6 @@ public class Modele {
         return result;
     }
 
-    public HashMap<Integer, Materiel> getMateriels() {
-        return this.materiels;
-    }
-
     public ArrayList<Materiel> getMateriels(String src, int id) {
 
         if (src==null && id==0) return new ArrayList<Materiel>(materiels.values());
@@ -168,9 +165,6 @@ public class Modele {
         ArrayList<Materiel> result = new ArrayList<Materiel>();
 
         for (Materiel mat : materiels.values()) {
-            System.out.println("Debug : src=" + src + " Id= " + id);
-            System.out.println("materiel :" + mat);
-            System.out.println("proprio " + mat.getProprietaire());
             if (src.equals("Institutions") && mat.getProprietaire().getId()==id) {
                 result.add(mat);
             }
@@ -189,6 +183,26 @@ public class Modele {
 
     public HashMap<Integer, Institution> getInstitutions() {
         return this.institutions;
+    }
+
+    public HashMap<Integer, Individu> getIndividus() {
+        return this.individus;
+    }
+
+    public ArrayList<Individu> getIndividus(String src, int id) {
+
+        if (src==null && id==0) return new ArrayList<Individu>(individus.values());
+
+        ArrayList<Individu> result = new ArrayList<Individu>();
+
+        for (Individu individu : individus.values()) {
+            if (src.equals("Institutions") && individu.getInstitution().getId()==id) {
+                result.add(individu);
+            }
+        }
+
+        return result;
+        
     }
 
     public void deleteMateriel(Materiel mat) {
