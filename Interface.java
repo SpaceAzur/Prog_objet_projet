@@ -1,21 +1,39 @@
 import java.awt.*;
+import java.util.*;
+
 import javax.swing.*;
 import javax.swing.border.*;
 
 public class Interface {
 
+    Modele mod;
+
+    public final int HEIGHT = 700;
+    public final int WIDTH = 1150;
+    public final int MENU = 150;
+    public final int CENTER = 600;
+    public final int SIDE = 400;
+    public final int TOPBAR = 75;
+
     JFrame fenetre;
-    JPanel menu;
     JPanel center;
     JPanel side;
-    Modele mod;
-    
-    public MenuItem currentMenu;
+    JPanel topbar;
+
+    JLabel title;
+
+    Menu menu;
+
+    CenterTableControl tableCtrl;
+    SideControl sideCtrl;
+    DeleteControl delCtrl;
 
     public Font titleFont = new Font("Verdana", Font.BOLD, 50);
+    public Font sideTitleFont = new Font("Verdana", Font.BOLD, 35);
     public Font menuFont = new Font("Verdana", Font.PLAIN, 25);
     public Font headerFont = new Font("Verdana", Font.BOLD, 15);
     public Font tableFont = new Font("Verdana", Font.PLAIN, 15);
+    public Font sideFont = new Font("Verdana", Font.PLAIN, 20);
 
     public Color yellow = new Color(242, 190, 84);
     public Color blue = new Color(21, 62, 92);
@@ -24,13 +42,23 @@ public class Interface {
     public Interface(Modele mod) {
 
         this.mod = mod;
+
+        tableCtrl = new CenterTableControl(this);
+        sideCtrl = new SideControl(this);
+        delCtrl = new DeleteControl(this);
+
         initWindow();
-        initMenu();
+
+        menu = new Menu(this);
+
         initCenter();
         initSide();
+        initTopbar();
+
         fenetre.add(menu);
         fenetre.add(center);
         fenetre.add(side);
+        fenetre.add(topbar);
         fenetre.setVisible(true);
 
     }
@@ -38,7 +66,7 @@ public class Interface {
     public void initWindow() {
 
         fenetre = new JFrame();
-        fenetre.setSize(1600, 900);
+        fenetre.setSize(WIDTH, HEIGHT);
         fenetre.setLayout(null);
         fenetre.setResizable(false);
         fenetre.setLocation(100, 100);
@@ -47,11 +75,36 @@ public class Interface {
 
     }
 
+    public void initTopbar() {
+
+        topbar = new JPanel();
+        topbar.setLocation(MENU, 0);
+        topbar.setSize(CENTER, TOPBAR);
+        topbar.setBackground(blue);
+        topbar.setLayout(null);
+        topbar.setBorder(BorderFactory.createMatteBorder(0, 2, 2, 2, yellow));
+
+        title = new JLabel();
+        title.setFont(sideTitleFont);
+        title.setForeground(Color.WHITE);
+        title.setLocation(30, 15);
+        topbar.add(title);
+        changeTitle("Test");
+
+    }
+
+    public void changeTitle(String t) {
+
+        title.setText(t);
+        title.setSize(title.getPreferredSize());
+
+    }
+
     public void initSide() {
 
         side = new JPanel();
-        side.setLocation(1100,0);
-        side.setSize(500,900);
+        side.setLocation(MENU + CENTER, 0);
+        side.setSize(SIDE, HEIGHT);
         side.setBackground(blue);
         side.setLayout(null);
         side.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, yellow));
@@ -61,63 +114,71 @@ public class Interface {
     public void initCenter() {
 
         center = new JPanel();
-        center.setLocation(150, 0);
-        center.setSize(950, 900);
+        center.setLocation(MENU, TOPBAR);
+        center.setSize(CENTER, HEIGHT - TOPBAR);
         center.setBackground(Color.WHITE);
         center.setLayout(null);
 
     }
 
-    public void showPersonnes() {
+    public void showInstitutions() {
 
         center.removeAll();
 
-        String[] colonnes = { "Prénom", "Nom", "Statut" };
-        Object[][] data = { { "Pierre", "Danel", "étudiant" }, { "Antoine", "Escobar", "étudiant" } };
-       
-        CenterTable table = new CenterTable(data, colonnes, this);
+        String[] colonnes = { "ID institution", "Raison sociale", "Adresse" };
+        HashMap<Integer, Institution> institutions = mod.getInstitutions();
+        String[][] data = new String[institutions.size()][3];
+
+        int i = 0;
+
+        for (Institution val : institutions.values()) {
+
+            data[i][0] = Integer.toString(val.getId());
+            data[i][1] = val.getRaisonSociale();
+            data[i][2] = val.getAdresse();
+            i++;
+
+        }
+
+        CenterTable table = new CenterTable(data, colonnes, this, "Institutions");
+        table.addMouseListener(tableCtrl);
 
         JScrollPane panneau = new JScrollPane(table);
-        panneau.setSize(950, 900);
+        panneau.setSize(CENTER, HEIGHT - TOPBAR);
         panneau.setBorder(new LineBorder(yellow, 1));
         panneau.setLocation(0, 0);
+
+        changeTitle("Liste des institutions");
 
         center.add(panneau);
 
     }
 
-    public void showMateriel() {
+    public void showMateriel(String src, int id) {
 
         center.removeAll();
 
-        String[] colonnes = { "Marque", "Nom", "Etat" };
-        Object[][] data = { { "Samsung", "Galaxy S10+", "Fonctionnel" }, { "Apple", "iPhone XS", "En panne" } };
+        String[] colonnes = { "ID", "Marque", "Modele", "Etat" };
+        ArrayList<Materiel> materiels = mod.getMateriels(src, id);
+        String[][] data = new String[materiels.size()][4];
 
-        CenterTable table = new CenterTable(data, colonnes, this);
+        for (int i = 0; i < materiels.size(); i++) {
+            data[i][0] = Integer.toString(materiels.get(i).getId());
+            data[i][1] = materiels.get(i).getMarque();
+            data[i][2] = materiels.get(i).getModele();
+            data[i][3] = materiels.get(i).getEtat();
+        }
+
+        CenterTable table = new CenterTable(data, colonnes, this, "Matériels");
+        table.addMouseListener(tableCtrl);
 
         JScrollPane panneau = new JScrollPane(table);
-        panneau.setSize(950, 900);
+        panneau.setSize(CENTER, HEIGHT - TOPBAR);
         panneau.setBorder(new LineBorder(yellow, 1));
         panneau.setLocation(0, 0);
 
-        center.add(panneau);
-
-    }
-
-    
-    public void showEmprunts() {
-
-        center.removeAll();
-
-        String[] colonnes = { "Emprunteur", "Institution", "Statut" };
-        Object[][] data = { { "Tellier", "UEVE", "En cours" }, { "Bouyer", "ENSiiE", "Terminé" } };
-
-        CenterTable table = new CenterTable(data, colonnes, this);
-
-        JScrollPane panneau = new JScrollPane(table);
-        panneau.setSize(950, 900);
-        panneau.setBorder(new LineBorder(yellow, 1));
-        panneau.setLocation(0, 0);
+        if (src == null)
+            changeTitle("Tous les matériels");
 
         center.add(panneau);
 
@@ -126,79 +187,102 @@ public class Interface {
     public void showBatiments() {
 
         center.removeAll();
-        
-        String[] colonnes = { "Nom", "Adresse", "Propriétaire", "Responsable" };
-        Object[][] data = { { "ENSiiE Evry", "Square de la résistance", "ENSiiE", "Tellier" }, { "IBISC", "Evry", "UEVE", "Bouyer" } };
 
-        CenterTable table = new CenterTable(data, colonnes, this);
+        String[] colonnes = { "Nom", "Adresse", "Propriétaire", "Responsable" };
+        Object[][] data = { { "ENSiiE Evry", "Square de la résistance", "ENSiiE", "Tellier" },
+                { "IBISC", "Evry", "UEVE", "Bouyer" } };
+
+        CenterTable table = new CenterTable(data, colonnes, this, "batiments");
 
         JScrollPane panneau = new JScrollPane(table);
-        panneau.setSize(950, 900);
+        panneau.setSize(CENTER, HEIGHT - TOPBAR);
         panneau.setBorder(new LineBorder(yellow, 1));
         panneau.setLocation(0, 0);
+
+        changeTitle("Tous les bâtiments");
 
         center.add(panneau);
 
     }
 
-    public void initMenu() {
+    public void showEmprunts() {
 
-        menu = new JPanel();
-        menu.setLocation(0, 0);
-        menu.setSize(150, 900);
-        menu.setBackground(blue);
-        menu.setLayout(null);
-        menu.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 0, yellow));
+        center.removeAll();
 
-        MenuControl mctrl = new MenuControl(this);
+        String[] colonnes = { "Emprunteur", "Institution", "Statut" };
+        Object[][] data = { { "Tellier", "UEVE", "En cours" }, { "Bouyer", "ENSiiE", "Terminé" } };
 
-        JLabel a38 = new JLabel(" A38");
-        a38.setLocation(0, 0);
-        a38.setSize(150, 100);
-        a38.setFont(titleFont);
-        a38.setForeground(yellow);
+        CenterTable table = new CenterTable(data, colonnes, this, "emprunts");
 
-        MenuItem materiel = new MenuItem("materiel", mctrl);
-        materiel.setLocation(0, 100);
-        materiel.setSize(150, 40);
-        materiel.setBackground(yellow);
+        JScrollPane panneau = new JScrollPane(table);
+        panneau.setSize(CENTER, HEIGHT - TOPBAR);
+        panneau.setBorder(new LineBorder(yellow, 1));
+        panneau.setLocation(0, 0);
 
-        MenuItem emprunts = new MenuItem("emprunts", mctrl);
-        emprunts.setLocation(0, 155);
-        emprunts.setSize(150, 40);
-        emprunts.setBackground(yellow);
+        changeTitle("Tous les emprunts");
 
-        MenuItem personnes = new MenuItem("personnes", mctrl);
-        personnes.setLocation(0, 210);
-        personnes.setSize(150, 40);
-        personnes.setBackground(yellow);
+        center.add(panneau);
 
-        MenuItem batiments = new MenuItem("batiments", mctrl);
-        batiments.setLocation(0, 265);
-        batiments.setSize(150, 40);
-        batiments.setBackground(yellow);
+    }
 
-        JLabel mat = new JLabel("Matériel");
-        mat.setFont(menuFont);
-        materiel.add(mat);
+    public void showSideInst(int id) {
 
-        JLabel emp = new JLabel("Emprunts");
-        emp.setFont(menuFont);
-        emprunts.add(emp);
+        side.removeAll();
 
-        JLabel pers = new JLabel("Personnes");
-        pers.setFont(menuFont);
-        personnes.add(pers);
+        Institution morale = mod.getInstitutions().get(id);
 
-        JLabel bat = new JLabel("Bâtiments");
-        bat.setFont(menuFont);
-        batiments.add(bat);
+        JLabel rs = new JLabel(morale.getRaisonSociale());
+        rs.setFont(sideTitleFont);
+        rs.setForeground(Color.WHITE);
+        rs.setSize(rs.getPreferredSize());
+        rs.setLocation(SIDE / 2 - rs.getWidth() / 2, 50);
+        side.add(rs);
 
-        menu.add(a38);
-        menu.add(materiel);
-        menu.add(emprunts);
-        menu.add(personnes);
-        menu.add(batiments);
+        SideLabel idl = new SideLabel("ID : " + morale.getId(), this, 50, 150);
+        SideLabel adresse = new SideLabel("<html>Adresse : <br>" + morale.getAdresse() + "</html>", this, 50, 200);
+        SideLabel email = new SideLabel("<html>Mail : <br>" + morale.getEmail() + "</html>", this, 50, 280);
+        SideLabel telephone = new SideLabel("Tel : ", this, 50, 360);
+
+        SideButton materiel = new SideButton("Institutions", menu.materiels, id, this, 25, 450);
+        SideButton emprunts = new SideButton("Institutions", menu.emprunts, id, this, 215, 450);
+        SideButton batiments = new SideButton("Institutions", menu.batiments, id, this, 25, 560);
+        SideButton personnes = new SideButton("Institutions", menu.personnes, id, this, 215, 560);
+
+        DeleteButton delete = new DeleteButton(morale);
+        delete.addMouseListener(delCtrl);
+        side.add(delete);
+
+        side.repaint();
+
+    }
+
+    public void showSideMat(int id) {
+
+        side.removeAll();
+
+        Materiel matos = mod.getMateriels().get(id);
+
+        JLabel mat = new JLabel(matos.getModele());
+        mat.setFont(sideTitleFont);
+        mat.setForeground(Color.WHITE);
+        mat.setSize(mat.getPreferredSize());
+        mat.setLocation(SIDE / 2 - mat.getWidth() / 2, 50);
+        side.add(mat);
+
+        SideLabel idl = new SideLabel("ID : " + matos.getId(), this, 50, 150);
+        SideLabel proprio = new SideLabel("Propriétaire : " + matos.getProprietaire().getRaisonSociale(), this, 50,
+                180);
+        SideLabel marque = new SideLabel("Marque : " + matos.getMarque(), this, 50, 210);
+        SideLabel prix = new SideLabel("Prix : " + matos.getPrixAchat(), this, 50, 240);
+        SideLabel date = new SideLabel("<html>Date d'achat : <br>" + matos.getDateAchat() + "</html>", this, 50, 270);
+        SideLabel etat = new SideLabel("Etat : " + matos.getEtat(), this, 50, 330);
+        SideLabel connec = new SideLabel("Connectique : " + matos.getConnectique(), this, 50, 360);
+
+        DeleteButton delete = new DeleteButton(matos);
+        delete.addMouseListener(delCtrl);
+        side.add(delete);
+
+        side.repaint();
 
     }
 

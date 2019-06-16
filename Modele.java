@@ -1,15 +1,110 @@
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Modele {
 
+    Connection conn;
+
     ArrayList<Emprunt> emprunts;
-    ArrayList<Materiel> materiels;
-    ArrayList<Personne> personnes;
-    ArrayList<Batiment> batiments;
+    HashMap<Integer, Materiel> materiels;
+    HashMap<Integer, Institution> institutions;
+    HashMap<Integer, PersonnePhysique> physiques;
+    HashMap<Integer, Batiment> batiments;
     ArrayList<Utilisateur> utilisateurs;
 
-    public Modele() {
-        emprunts=new ArrayList<Emprunt>();
+    public Modele(Connection conn) {
+        emprunts = new ArrayList<Emprunt>();
+        materiels = new HashMap<Integer, Materiel>();
+        institutions = new HashMap<Integer, Institution>();
+        physiques = new HashMap<Integer, PersonnePhysique>();
+        batiments = new HashMap<Integer, Batiment>();
+        utilisateurs = new ArrayList<Utilisateur>();
+
+        this.conn = conn;
+        initInstitutions();
+        initMateriels();
+    }
+
+    private void initInstitutions() {
+
+        try {
+
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM personnesmorales");
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                int id = rs.getInt("id");            
+                String raison = rs.getString("raisonsocial");
+                String adresse = rs.getString("adresse");                
+                String telephone = rs.getString("telephone");                
+                String email = rs.getString("email");
+                
+                institutions.put(id, new Institution(id, adresse, telephone, email, raison));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void initMateriels() {
+
+        try {
+
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM terminaux");
+            ResultSet rs = ps.executeQuery();
+            SimpleDateFormat dateF = new SimpleDateFormat("dd/MM/yyyy");
+
+            while (rs.next()) {
+                
+                Terminal t = new Terminal();
+
+                t.setProprietaire(getInstitutions().get(rs.getInt("proprietaire")));
+                t.setId(rs.getInt("id"));
+                t.setModele(rs.getString("modele"));
+                t.setMarque(rs.getString("marque"));
+                t.setPrixAchat(rs.getDouble("prixachat"));
+                t.setDateAchat(dateF.parse(rs.getString("dateachat")));
+                t.setEtat(rs.getString("etat"));
+                t.setOS(rs.getString("OS"));
+                t.setTailleEcran(rs.getDouble("tailleecran"));
+                t.setXResolution((int) rs.getDouble("xresolution"));
+                t.setYResolution((int) rs.getDouble("yresolution"));
+
+                materiels.put(t.getId(), t);
+
+            }
+
+            ps = conn.prepareStatement("SELECT * FROM terminaux");
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+
+                Peripherique t = new Peripherique();
+
+                t.setProprietaire(getInstitutions().get(rs.getInt("proprietaire")));
+                t.setId(rs.getInt("id"));
+                t.setModele(rs.getString("modele"));
+                t.setMarque(rs.getString("marque"));
+                t.setPrixAchat(rs.getDouble("prixachat"));
+                t.setDateAchat(dateF.parse(rs.getString("dateachat")));
+                t.setEtat(rs.getString("etat"));
+                t.setNature(rs.getString("nature"));
+
+                materiels.put(t.getId(), t);
+
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public ArrayList<Emprunt> getEmprunts() {
@@ -36,20 +131,62 @@ public class Modele {
         return result;
     }
 
-    public ArrayList<Materiel> getMateriels() {
+    public HashMap<Integer, Materiel> getMateriels() {
         return this.materiels;
     }
 
-    public ArrayList<Personne> getPersonnes() {
-        return this.personnes;
+    public ArrayList<Materiel> getMateriels(String src, int id) {
+
+        if (src==null && id==0) return new ArrayList<Materiel>(materiels.values());
+        
+        ArrayList<Materiel> result = new ArrayList<Materiel>();
+
+        for (Materiel mat : materiels.values()) {
+            if (src.equals("Institutions") && mat.getProprietaire().getId()==id) result.add(mat);
+        }
+
+        return result;
     }
 
-    public ArrayList<Batiment> getBatiments() {
+    public HashMap<Integer, Batiment> getBatiments() {
         return this.batiments;
     }
 
     public ArrayList<Utilisateur> getUtilisateurs() {
         return this.utilisateurs;
+    }
+
+    public HashMap<Integer, Institution> getInstitutions() {
+        return this.institutions;
+    }
+
+    public void deleteMateriel(Materiel mat) {
+
+        PreparedStatement ps=null;
+        try {
+            if (mat instanceof Terminal) ps=conn.prepareStatement("DELETE FROM terminaux WHERE id=?");
+            else if (mat instanceof Peripherique) ps=conn.prepareStatement("DELETE FROM peripheriques WHERE id=?");
+            ps.setInt(1, mat.getId());
+            ps.executeQuery();
+            materiels.remove(mat.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void deleteInstitution(Institution per) {
+
+        PreparedStatement ps=null;
+        try {
+            ps=conn.prepareStatement("DELETE FROM personnesmorales WHERE id=?");
+            ps.setInt(1, per.getId());
+            ps.executeUpdate();
+            institutions.remove(per.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

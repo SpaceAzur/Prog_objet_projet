@@ -1,11 +1,11 @@
+import java.sql.Connection;
 
 public class A38 {
 
     public static void main(String[] args) {
 
-        Modele mod = new Modele();
-        Personne p1 = new PersonnePhysique("Pierre", "Danel", "étudiant");
-        mod.getEmprunts().add(new Emprunt(p1));
+        Connection conn = DBConnection.getConnection();
+        Modele mod = new Modele(conn);
 
         Interface gui = new Interface(mod);
 

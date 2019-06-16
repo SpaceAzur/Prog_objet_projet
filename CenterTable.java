@@ -5,11 +5,13 @@ import javax.swing.table.*;
 public class CenterTable extends JTable {
 
     Interface interf;
+    String type;
 
-    public CenterTable(Object[][] data, String[] cols, Interface interf) {
+    public CenterTable(Object[][] data, String[] cols, Interface interf, String type) {
 
         super(data, cols);
         this.interf=interf;
+        this.type=type;
 
         class SimpleHeaderRenderer extends JLabel implements TableCellRenderer {
  
@@ -56,6 +58,10 @@ public class CenterTable extends JTable {
         jc.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(interf.yellow, 1),
                 BorderFactory.createEmptyBorder(0, 10, 0, 10)));
         return jc;
+    }
+
+    public String getType() {
+        return type;
     }
 
 }

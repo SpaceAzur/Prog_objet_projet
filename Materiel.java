@@ -2,24 +2,22 @@ import java.util.Date;
 
 public class Materiel {
 
-    enum Etat {
-        NEUF, USE, ABIME, PANNE;
-    }
-
-    protected Personne proprietaire;
+    protected Institution proprietaire;
     protected String UUID;
     protected String modele;
     protected String marque;
+    protected String nature;
     protected double prixAchat;
     protected Date dateAchat;
-    protected Etat etat;
+    protected String etat;
     protected String[] connectique;
+    protected int id;
 
-    public Personne getProprietaire() {
+    public Institution getProprietaire() {
         return this.proprietaire;
     }
 
-    public void setProprietaire(Personne proprietaire) {
+    public void setProprietaire(Institution proprietaire) {
         this.proprietaire = proprietaire;
     }
 
@@ -29,6 +27,14 @@ public class Materiel {
 
     public void setUUID(String UUID) {
         this.UUID = UUID;
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
+    public void setId(int id) {
+        this.id=id;
     }
 
     public String getModele() {
@@ -63,11 +69,11 @@ public class Materiel {
         this.dateAchat = dateAchat;
     }
 
-    public Etat getEtat() {
+    public String getEtat() {
         return this.etat;
     }
 
-    public void setEtat(Etat etat) {
+    public void setEtat(String etat) {
         this.etat = etat;
     }
 
@@ -77,6 +83,10 @@ public class Materiel {
 
     public void setConnectique(String[] connectique) {
         this.connectique = connectique;
+    }
+
+    public void setNature(String nature) {
+        this.nature=nature;
     }
 
 }
