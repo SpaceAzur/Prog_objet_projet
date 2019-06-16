@@ -142,6 +142,8 @@ public class Modele {
         ArrayList<Materiel> result = new ArrayList<Materiel>();
 
         for (Materiel mat : materiels.values()) {
+            System.out.println("Debug : src=" + src + " Id= " + id);
+            System.out.println("materiel :" + mat);
             if (src.equals("Institutions") && mat.getProprietaire().getId()==id) result.add(mat);
         }
 

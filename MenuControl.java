@@ -16,9 +16,10 @@ public class MenuControl implements MouseListener {
             item = (MenuButton) e.getSource();
 
             //if (item.getName().equals("personnes")) interf.showPersonnes();
-            if (item.getName().equals("materiel")) interf.showMateriel(null, 0);
-            if (item.getName().equals("emprunts")) interf.showEmprunts();
-            if (item.getName().equals("batiments")) interf.showBatiments();
+            if (item.getName().equals("Matériels")) interf.showMateriel(null, 0);
+            if (item.getName().equals("Emprunts")) interf.showEmprunts();
+            if (item.getName().equals("Bâtiments")) interf.showBatiments();
+            if (item.getName().equals("Institutions")) interf.showInstitutions();
 
             if (interf.menu.current != null) interf.menu.current.setBackground(interf.yellow);
             interf.menu.current=item;
