@@ -3,7 +3,6 @@ import java.util.Date;
 public class Materiel {
 
     protected Institution proprietaire;
-    protected String UUID;
     protected String modele;
     protected String marque;
     protected String nature;
@@ -19,14 +18,6 @@ public class Materiel {
 
     public void setProprietaire(Institution proprietaire) {
         this.proprietaire = proprietaire;
-    }
-
-    public String getUUID() {
-        return this.UUID;
-    }
-
-    public void setUUID(String UUID) {
-        this.UUID = UUID;
     }
 
     public int getId() {

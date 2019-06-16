@@ -1,18 +1,18 @@
 public class Personne {
 
-    private String adresse;
-    private String telephone;
-    private String email;
-    private int id;
+    protected String adresse;
+    protected String telephone;
+    protected String email;
+    protected int id;
 
     public Personne() {
-        
+
     }
 
-    public Personne(int id, String ad, String tel, String email) {
+    public Personne(int id, String adresse, String telephone, String email) {
         this.id=id;
-        this.adresse=ad;
-        this.telephone=tel;
+        this.adresse=adresse;
+        this.telephone=telephone;
         this.email=email;
     }
 

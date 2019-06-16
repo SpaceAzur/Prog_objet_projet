@@ -12,7 +12,7 @@ public class Modele {
     ArrayList<Emprunt> emprunts;
     HashMap<Integer, Materiel> materiels;
     HashMap<Integer, Institution> institutions;
-    HashMap<Integer, PersonnePhysique> physiques;
+    HashMap<Integer, Individu> individus;
     HashMap<Integer, Batiment> batiments;
     ArrayList<Utilisateur> utilisateurs;
 
@@ -20,12 +20,13 @@ public class Modele {
         emprunts = new ArrayList<Emprunt>();
         materiels = new HashMap<Integer, Materiel>();
         institutions = new HashMap<Integer, Institution>();
-        physiques = new HashMap<Integer, PersonnePhysique>();
+        individus = new HashMap<Integer, Individu>();
         batiments = new HashMap<Integer, Batiment>();
         utilisateurs = new ArrayList<Utilisateur>();
 
         this.conn = conn;
         initInstitutions();
+        initIndividus();
         initMateriels();
     }
 
@@ -33,7 +34,7 @@ public class Modele {
 
         try {
 
-            PreparedStatement ps = conn.prepareStatement("SELECT * FROM personnesmorales");
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM institutions");
             ResultSet rs = ps.executeQuery();
             
             while (rs.next()) {
@@ -44,6 +45,31 @@ public class Modele {
                 String email = rs.getString("email");
                 
                 institutions.put(id, new Institution(id, adresse, telephone, email, raison));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void initIndividus() {
+
+        try {
+
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM individus");
+            ResultSet rs = ps.executeQuery();
+            
+            while (rs.next()) {
+                int id = rs.getInt("id");            
+                String prenom = rs.getString("prenom");
+                String nom = rs.getString("nom");
+                String status = rs.getString("status");
+                String adresse = rs.getString("adresse");                
+                String telephone = rs.getString("telephone");                
+                String email = rs.getString("email");
+                
+                physiques.put(id, new Individu(id, prenom, nom, status, adresse, telephone, email));
             }
 
         } catch (Exception e) {
@@ -144,7 +170,10 @@ public class Modele {
         for (Materiel mat : materiels.values()) {
             System.out.println("Debug : src=" + src + " Id= " + id);
             System.out.println("materiel :" + mat);
-            if (src.equals("Institutions") && mat.getProprietaire().getId()==id) result.add(mat);
+            System.out.println("proprio " + mat.getProprietaire());
+            if (src.equals("Institutions") && mat.getProprietaire().getId()==id) {
+                result.add(mat);
+            }
         }
 
         return result;
