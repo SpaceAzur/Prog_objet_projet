@@ -1,9 +1,8 @@
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Emprunt {
+public class Emprunt extends A38Object {
 
-    private int ID;
     private Date debut;
     private Date fin;
     private String raison;
@@ -11,18 +10,7 @@ public class Emprunt {
     private Personne emprunteur;
     private ArrayList<Materiel> materiel;
 
-    @Override
-    public String toString() {
-        String res="";
-        res+="Emprunt n°";
-        res+=ID;
-        res+=" par ";
-        res+=emprunteur;
-        return res;
-    }
-
     public Emprunt(Personne p) {
-        this.ID=5;
         this.emprunteur=p;
 
     }

@@ -1,6 +1,6 @@
 import java.util.Date;
 
-public class Materiel {
+public class Materiel extends A38Object {
 
     protected Institution proprietaire;
     protected String modele;
@@ -10,7 +10,6 @@ public class Materiel {
     protected Date dateAchat;
     protected String etat;
     protected String[] connectique;
-    protected int id;
 
     public Institution getProprietaire() {
         return this.proprietaire;
@@ -18,14 +17,6 @@ public class Materiel {
 
     public void setProprietaire(Institution proprietaire) {
         this.proprietaire = proprietaire;
-    }
-
-    public int getId() {
-        return this.id;
-    }
-
-    public void setId(int id) {
-        this.id=id;
     }
 
     public String getModele() {

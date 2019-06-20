@@ -10,19 +10,15 @@ public class MenuControl implements MouseListener {
 
     public void mouseClicked(MouseEvent e) {
 
-        MenuButton item;
         if (e.getSource() instanceof MenuButton) {
 
-            item = (MenuButton) e.getSource();
+            MenuButton bouton = (MenuButton) e.getSource();
+            String type = bouton.getName();
 
-            if (item.getName().equals("Personnes")) interf.showIndividus(null,0);
-            if (item.getName().equals("Matériels")) interf.showMateriel(null, 0);
-            if (item.getName().equals("Emprunts")) interf.showEmprunts();
-            if (item.getName().equals("Bâtiments")) interf.showBatiments();
-            if (item.getName().equals("Institutions")) interf.showInstitutions();
+            interf.showObjects(type, null);
 
             if (interf.menu.current != null) interf.menu.current.setBackground(interf.yellow);
-            interf.menu.current=item;
+            interf.menu.current=bouton;
             interf.menu.current.setBackground(interf.lightBlue);
         }
 

@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Armoire {
+public class Armoire extends A38Object {
 
     private String nom;
     private int nbEtageres;

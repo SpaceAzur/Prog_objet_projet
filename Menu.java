@@ -18,7 +18,7 @@ public class Menu extends JPanel {
     public Menu(Interface interf) {
 
         this.interf=interf;
-        mctrl = new MenuControl(interf);
+        this.mctrl = new MenuControl(interf);
 
         this.setLocation(0, 0);
         this.setSize(interf.MENU, interf.HEIGHT);
@@ -47,7 +47,7 @@ public class Menu extends JPanel {
 
     }
 
-    public void changeCurrentMenu(MenuButton b) {
+    public void changeCurrent(MenuButton b) {
 
         if (current != null) current.setBackground(interf.yellow);
         current=b;

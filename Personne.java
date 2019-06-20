@@ -1,9 +1,8 @@
-public class Personne {
+public class Personne extends A38Object {
 
     protected String adresse;
     protected String telephone;
     protected String email;
-    protected int id;
 
     public Personne() {
 
@@ -40,8 +39,5 @@ public class Personne {
         this.email = email;
     }
 
-    public int getId() {
-        return id;
-    }
 
 }

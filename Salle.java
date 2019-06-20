@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Salle {
+public class Salle extends A38Object {
 
     private String nom;
     private int etage;

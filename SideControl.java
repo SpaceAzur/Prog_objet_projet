@@ -1,12 +1,23 @@
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
 
 public class SideControl implements MouseListener {
 
     Interface interf;
 
+    Map<String, Consumer<A38Object>> commandes = new HashMap<>();
+
     public SideControl(Interface interf) {
         this.interf = interf;
+
+        //commandes.put("Matériels", (src) -> interf.showMateriels(src));
+        //commandes.put("Personnes", (src) -> interf.showIndividus(src));
+        // commandes.put("Emprunts", (src,id) -> interf.showEmprunts(src, id));
+        // commandes.put("Bâtiments", (src, id) -> interf.showBatiments(src, id));
+
     }
 
     public void mouseClicked(MouseEvent e) {
@@ -15,44 +26,42 @@ public class SideControl implements MouseListener {
 
             SideButton item = (SideButton) e.getSource();
 
-            String newTitle="";
+            String dst = item.getDst().getName();
+            A38Object src = item.getSrc();
+            int id = src.getId();
 
-            String dst=item.getDst().getName();
-            String src=item.getSrc();
+            //commandes.get(dst).accept(src);
+            interf.showObjects(dst, src);
 
-            if (dst.equals("Matériels")) {
-                interf.showMateriel(item.getSrc(), item.getId());
-                if (src.equals("Institutions")) newTitle="Matériels de " + interf.mod.getInstitutions().get(item.getId()).getRaisonSociale();
-                interf.changeTitle(newTitle);
-            } 
-            else if (dst.equals("Personnes")) {
-                interf.showIndividus(item.getSrc(), item.getId());
-                if (src.equals("Institutions")) newTitle="Personnes liées à " + interf.mod.getInstitutions().get(item.getId()).getRaisonSociale();
-                interf.changeTitle(newTitle);
-            }
+            String beginTitle = "";
+            String endTitle = "";
 
-            interf.menu.changeCurrentMenu(item.getDst());
+            if (dst.equals("Matériels"))
+                beginTitle = "Matériels de ";
+            else if (dst.equals("Personnes"))
+                beginTitle = "Personnes liées à ";
 
-            /*if (item.getDst().equals("Bâtiments")) {
-                interf.showBatiments(item.getSrc(), item.getId());
-            }*/
+            if (src instanceof Institution)
+                endTitle = interf.mod.getInstitution(id).getRaisonSociale();
 
-            /*if (item.getName().equals("institutions")) interf.showInstitutions();
-            if (item.getName().equals("materiel")) interf.showMateriel();
-            if (item.getName().equals("emprunts")) interf.showEmprunts();
-            if (item.getName().equals("batiments")) interf.showBatiments();*/
+            interf.changeTitle(beginTitle + endTitle);
 
-            /*if (interf.currentMenu != null) interf.currentMenu.setBackground(interf.yellow);
-            interf.currentMenu=item;
-            interf.currentMenu.setBackground(interf.lightBlue);*/
+            interf.changeCurrentMenu(item.getDst());
 
         }
 
     }
 
-    public void mouseExited(MouseEvent e) {    }
-    public void mouseEntered(MouseEvent e) {    }
-    public void mouseReleased(MouseEvent e) {    }
-    public void mousePressed(MouseEvent e) {    }
+    public void mouseExited(MouseEvent e) {
+    }
+
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    public void mousePressed(MouseEvent e) {
+    }
 
 }

@@ -1,13 +1,23 @@
-import java.sql.Connection;
+import java.sql.*;
 
 public class A38 {
 
     public static void main(String[] args) {
 
-        Connection conn = DBConnection.getConnection();
-        Modele mod = new Modele(conn);
+        try {
 
-        Interface gui = new Interface(mod);
+            Connection con = null;
+            Class.forName("org.sqlite.JDBC");
+            con = DriverManager.getConnection("jdbc:sqlite:a38.db");
+            Modele mod = new Modele(con);
+            Interface gui = new Interface(mod);
+
+        } catch (Exception e) {
+
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
+
+        }
 
     }
 

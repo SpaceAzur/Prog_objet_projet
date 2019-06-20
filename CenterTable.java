@@ -4,14 +4,14 @@ import javax.swing.table.*;
 
 public class CenterTable extends JTable {
 
-    Interface interf;
     String type;
+    Interface interf;
 
     public CenterTable(Object[][] data, String[] cols, Interface interf, String type) {
 
         super(data, cols);
-        this.interf=interf;
         this.type=type;
+        this.interf=interf;
 
         class SimpleHeaderRenderer extends JLabel implements TableCellRenderer {
  
@@ -33,7 +33,7 @@ public class CenterTable extends JTable {
             }
          
         }
-
+        setAutoCreateRowSorter(true);
         setRowHeight(35);
         setGridColor(interf.yellow);
         setFont(interf.tableFont);
@@ -43,6 +43,8 @@ public class CenterTable extends JTable {
         setFillsViewportHeight(true);
         getTableHeader().setDefaultRenderer(new SimpleHeaderRenderer());
         getTableHeader().setPreferredSize(new Dimension(100, 35));
+        //getTableHeader().setReorderingAllowed(false);
+        //getTableHeader().setResizingAllowed(false);
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
     }

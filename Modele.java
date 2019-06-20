@@ -9,26 +9,27 @@ public class Modele {
 
     Connection conn;
 
-    ArrayList<Emprunt> emprunts;
+    HashMap<Integer, Emprunt> emprunts;
     HashMap<Integer, Materiel> materiels;
     HashMap<Integer, Institution> institutions;
     HashMap<Integer, Individu> individus;
     HashMap<Integer, Batiment> batiments;
-    ArrayList<Utilisateur> utilisateurs;
 
     public Modele(Connection conn) {
-        emprunts = new ArrayList<Emprunt>();
+        emprunts = new HashMap<Integer, Emprunt>();
         materiels = new HashMap<Integer, Materiel>();
         institutions = new HashMap<Integer, Institution>();
         individus = new HashMap<Integer, Individu>();
         batiments = new HashMap<Integer, Batiment>();
-        utilisateurs = new ArrayList<Utilisateur>();
 
         this.conn = conn;
         initInstitutions();
         initIndividus();
         initMateriels();
+        initBatiments();
     }
+
+    /// INITIALISATION ///
 
     private void initInstitutions() {
 
@@ -36,14 +37,14 @@ public class Modele {
 
             PreparedStatement ps = conn.prepareStatement("SELECT * FROM institutions");
             ResultSet rs = ps.executeQuery();
-            
+
             while (rs.next()) {
-                int id = rs.getInt("id");            
+                int id = rs.getInt("id");
                 String raison = rs.getString("raisonsocial");
-                String adresse = rs.getString("adresse");                
-                String telephone = rs.getString("telephone");                
+                String adresse = rs.getString("adresse");
+                String telephone = rs.getString("telephone");
                 String email = rs.getString("email");
-                
+
                 institutions.put(id, new Institution(id, adresse, telephone, email, raison));
             }
 
@@ -59,18 +60,19 @@ public class Modele {
 
             PreparedStatement ps = conn.prepareStatement("SELECT * FROM individus");
             ResultSet rs = ps.executeQuery();
-            
+
             while (rs.next()) {
-                int id = rs.getInt("id");            
+                int id = rs.getInt("id");
                 String prenom = rs.getString("prenom");
                 String nom = rs.getString("nom");
                 String status = rs.getString("status");
-                String adresse = rs.getString("adresse");                
-                String telephone = rs.getString("telephone");                
+                String adresse = rs.getString("adresse");
+                String telephone = rs.getString("telephone");
                 String email = rs.getString("email");
                 int idInstitution = rs.getInt("institution");
-                
-                individus.put(id, new Individu(id, prenom, nom, status, adresse, telephone, email, institutions.get(idInstitution)));
+
+                individus.put(id, new Individu(id, prenom, nom, status, adresse, telephone, email,
+                        institutions.get(idInstitution)));
             }
 
         } catch (Exception e) {
@@ -88,10 +90,10 @@ public class Modele {
             SimpleDateFormat dateF = new SimpleDateFormat("dd/MM/yyyy");
 
             while (rs.next()) {
-                
+
                 Terminal t = new Terminal();
 
-                t.setProprietaire(getInstitutions().get(rs.getInt("proprietaire")));
+                t.setProprietaire(getInstitution(rs.getInt("proprietaire")));
                 t.setId(rs.getInt("id"));
                 t.setModele(rs.getString("modele"));
                 t.setMarque(rs.getString("marque"));
@@ -107,14 +109,14 @@ public class Modele {
 
             }
 
-            ps = conn.prepareStatement("SELECT * FROM terminaux");
+            ps = conn.prepareStatement("SELECT * FROM peripheriques");
             rs = ps.executeQuery();
 
             while (rs.next()) {
 
                 Peripherique t = new Peripherique();
 
-                t.setProprietaire(getInstitutions().get(rs.getInt("proprietaire")));
+                t.setProprietaire(getInstitution(rs.getInt("proprietaire")));
                 t.setId(rs.getInt("id"));
                 t.setModele(rs.getString("modele"));
                 t.setMarque(rs.getString("marque"));
@@ -127,6 +129,30 @@ public class Modele {
 
             }
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void initBatiments() {
+
+        try {
+
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM batiments");
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+
+                int id = rs.getInt("id");
+                Institution proprietaire = getInstitution(rs.getInt("institution"));
+                String nom = rs.getString("nombatiment");
+                String adresse = rs.getString("adresse");
+                Individu responsable = getIndividu(rs.getInt("responsable"));
+
+                batiments.put(id, new Batiment(id, adresse, nom, proprietaire, responsable));
+
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -134,14 +160,16 @@ public class Modele {
 
     }
 
-    public ArrayList<Emprunt> getEmprunts() {
-        return this.emprunts;
-    }
+    /// EMPRUNTS ///
 
-    public ArrayList<Emprunt> getEmprunts(Personne emprunteur) {
+    public ArrayList<Emprunt> getEmprunts(A38Object filter) {
+
+        if (filter == null)
+            return new ArrayList<Emprunt>(emprunts.values());
+
         ArrayList<Emprunt> result = new ArrayList<Emprunt>();
         for (int i = 0; i < emprunts.size(); i++) {
-            if (emprunts.get(i).getEmprunteur() == emprunteur) {
+            if (filter instanceof Individu && emprunts.get(i).getEmprunteur() == filter) {
                 result.add(emprunts.get(i));
             }
         }
@@ -158,63 +186,41 @@ public class Modele {
         return result;
     }
 
-    public ArrayList<Materiel> getMateriels(String src, int id) {
+    public Emprunt getEmprunt(int id) {
+        return emprunts.get(id);
+    }
 
-        if (src==null && id==0) return new ArrayList<Materiel>(materiels.values());
-        
+
+
+    /// MATERIELS ///
+
+    public ArrayList<Materiel> getMateriels(A38Object filter) {
+
+        if (filter == null)
+            return new ArrayList<Materiel>(materiels.values());
+
         ArrayList<Materiel> result = new ArrayList<Materiel>();
 
         for (Materiel mat : materiels.values()) {
-            if (src.equals("Institutions") && mat.getProprietaire().getId()==id) {
+            if (filter instanceof Institution && mat.getProprietaire().getId() == filter.getId())
                 result.add(mat);
-            }
         }
 
         return result;
     }
 
-    public HashMap<Integer, Batiment> getBatiments() {
-        return this.batiments;
-    }
-
-    public ArrayList<Utilisateur> getUtilisateurs() {
-        return this.utilisateurs;
-    }
-
-    public HashMap<Integer, Institution> getInstitutions() {
-        return this.institutions;
-    }
-
-    public HashMap<Integer, Individu> getIndividus() {
-        return this.individus;
-    }
-
-    public Individu getIndividu(int id) {
-        return individus.get(id);
-    }
-
-    public ArrayList<Individu> getIndividus(String src, int id) {
-
-        if (src==null && id==0) return new ArrayList<Individu>(individus.values());
-
-        ArrayList<Individu> result = new ArrayList<Individu>();
-
-        for (Individu individu : individus.values()) {
-            if (src.equals("Institutions") && individu.getInstitution().getId()==id) {
-                result.add(individu);
-            }
-        }
-
-        return result;
-        
+    public Materiel getMateriel(int id) {
+        return materiels.get(id);
     }
 
     public void deleteMateriel(Materiel mat) {
 
-        PreparedStatement ps=null;
+        PreparedStatement ps = null;
         try {
-            if (mat instanceof Terminal) ps=conn.prepareStatement("DELETE FROM terminaux WHERE id=?");
-            else if (mat instanceof Peripherique) ps=conn.prepareStatement("DELETE FROM peripheriques WHERE id=?");
+            if (mat instanceof Terminal)
+                ps = conn.prepareStatement("DELETE FROM terminaux WHERE id=?");
+            else if (mat instanceof Peripherique)
+                ps = conn.prepareStatement("DELETE FROM peripheriques WHERE id=?");
             ps.setInt(1, mat.getId());
             ps.executeQuery();
             materiels.remove(mat.getId());
@@ -224,11 +230,64 @@ public class Modele {
 
     }
 
+
+
+    /// INDIVIDUS ///
+
+    public ArrayList<Individu> getIndividus(A38Object filter) {
+
+        if (filter == null)
+            return new ArrayList<Individu>(individus.values());
+
+        ArrayList<Individu> result = new ArrayList<Individu>();
+
+        for (Individu individu : individus.values()) {
+            if (filter instanceof Institution && individu.getInstitution().getId() == filter.getId())
+                result.add(individu);
+        }
+
+        return result;
+
+    }
+
+    public Individu getIndividu(int id) {
+        return individus.get(id);
+    }
+
+
+
+    /// BATIMENTS ///
+
+    public ArrayList<Batiment> getBatiments(A38Object filter) {
+        
+        if (filter==null)
+            return new ArrayList<Batiment>(batiments.values());
+
+        return null;
+        
+    }
+
+    public Batiment getBatiment(int id) {
+        return batiments.get(id);
+    }
+
+
+
+    /// INSTITUTIONS ///
+
+    public HashMap<Integer, Institution> getInstitutions() {
+        return this.institutions;
+    }
+
+    public Institution getInstitution(int id) {
+        return institutions.get(id);
+    }
+
     public void deleteInstitution(Institution per) {
 
-        PreparedStatement ps=null;
+        PreparedStatement ps = null;
         try {
-            ps=conn.prepareStatement("DELETE FROM personnesmorales WHERE id=?");
+            ps = conn.prepareStatement("DELETE FROM personnesmorales WHERE id=?");
             ps.setInt(1, per.getId());
             ps.executeUpdate();
             institutions.remove(per.getId());

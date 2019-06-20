@@ -1,6 +1,4 @@
 import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.event.*;
 
 public class CenterTableControl implements MouseListener {
 
@@ -13,24 +11,36 @@ public class CenterTableControl implements MouseListener {
     public void mouseClicked(MouseEvent e) {
 
         CenterTable table = (CenterTable) e.getSource();
-        String type=table.getType();
+        String type = table.getType();
         int row = table.getSelectedRow();
-        int id = Integer.parseInt((String) table.getValueAt(row, 0));
-        if (type.equals("Institutions")) {
-            interf.showSideInst(id);
-        }
-        else if (type.equals("Matériels")) {
-            interf.showSideMat(id);
-        }
-        else if (type.equals("Personnes")) {
-            interf.showSidePers(id);
-        }
+        int id = Integer.parseInt((String) table.getValueAt(row, table.convertColumnIndexToView(table.getColumn("ID").getModelIndex())));
+        A38Object obj = null;
+
+        if (type.equals("Institutions"))
+            obj = interf.mod.getInstitution(id);
+        else if (type.equals("Matériels"))
+            obj = interf.mod.getMateriel(id);
+        else if (type.equals("Personnes"))
+            obj = interf.mod.getIndividu(id);
+        else if (type.equals("Emprunts"))
+            obj = interf.mod.getEmprunt(id);
+        else if (type.equals("Bâtiments"))
+            obj = interf.mod.getBatiment(id);
+
+        interf.showObject(obj);
 
     }
 
-    public void mouseExited(MouseEvent e) {    }
-    public void mouseEntered(MouseEvent e) {    }
-    public void mouseReleased(MouseEvent e) {    }
-    public void mousePressed(MouseEvent e) {    }
+    public void mouseExited(MouseEvent e) {
+    }
+
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    public void mousePressed(MouseEvent e) {
+    }
 
 }

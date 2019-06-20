@@ -4,14 +4,14 @@ import javax.swing.JLabel;
 
 public class SideLabel extends JLabel {
     
-    public SideLabel(String s, Interface interf, int x, int y) {
+    public SideLabel(String s, Side side, int x, int y) {
 
         super(s);
-        this.setFont(interf.sideFont);
+        this.setFont(side.interf.sideFont);
         this.setForeground(Color.WHITE);
         this.setSize(this.getPreferredSize());
         this.setLocation(x,y);
-        interf.side.add(this);
+        side.add(this);
     }
 
 }
