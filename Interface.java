@@ -51,7 +51,8 @@ public class Interface {
 
         fenetre.setVisible(true);
 
-        showObjects("Matériels", null);
+        showObjects("Institutions", null);
+        editItem(mod.getInstitution(2));
 
     }
 
@@ -68,6 +69,8 @@ public class Interface {
     }
 
     public void showObject(A38Object obj) {
+
+        side.removeAll();
         if (obj instanceof Individu)
             side.showIndividu((Individu) obj);
         if (obj instanceof Institution)
@@ -82,24 +85,28 @@ public class Interface {
             side.showSalle((Salle) obj);
         if (obj instanceof Armoire)
             side.showArmoire((Armoire) obj);
+        side.repaint();
     }
 
     public void showObjects(String type, A38Object filter) {
 
+        center.setCurrentType(type);
+        center.setFilter(filter);
+
         if (type.equals("Personnes"))
-            center.showIndividus(filter);
+            center.showIndividus();
         if (type.equals("Emprunts"))
-            center.showEmprunts(filter);
+            center.showEmprunts();
         if (type.equals("Matériels"))
-            center.showMateriels(filter);
+            center.showMateriels();
         if (type.equals("Institutions"))
-            center.showInstitutions(filter);
+            center.showInstitutions();
         if (type.equals("Bâtiments"))
-            center.showBatiments(filter);
+            center.showBatiments();
         if (type.equals("Salles"))
-            center.showSalles(filter);
+            center.showSalles();
         if (type.equals("Armoires"))
-            center.showArmoires(filter);
+            center.showArmoires();
 
     }
 
@@ -109,6 +116,31 @@ public class Interface {
 
     public void changeCurrentMenu(MenuButton b) {
         menu.changeCurrent(b);
+    }
+
+    public void refreshObjects() {
+        showObjects(center.getCurrentType(), center.getFilter());
+    }
+
+    public void editItem(A38Object obj) {
+        
+        side.removeAll();
+        if (obj instanceof Individu)
+            side.editIndividu((Individu) obj);
+        if (obj instanceof Institution)
+            side.editInstitution((Institution) obj);
+        if (obj instanceof Materiel)
+            side.editMateriel((Materiel) obj);
+        if (obj instanceof Emprunt)
+            side.editEmprunt((Emprunt) obj);
+        if (obj instanceof Batiment)
+            side.editBatiment((Batiment) obj);
+        if (obj instanceof Salle)
+            side.editSalle((Salle) obj);
+        if (obj instanceof Armoire)
+            side.editArmoire((Armoire) obj);
+        side.repaint();
+
     }
 
 }

@@ -19,7 +19,7 @@ public class SideButton extends JPanel {
 
         JLabel label = new JLabel(dst.getName());
         label.setFont(side.interf.sideFont);
-        label.setForeground(Color.WHITE);
+        label.setForeground(Color.BLACK);
         label.setSize(label.getPreferredSize());
         label.setLocation(this.getWidth() / 2 - label.getWidth() / 2,
         this.getHeight() / 2 - label.getHeight() / 2);

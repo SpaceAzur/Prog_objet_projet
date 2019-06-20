@@ -14,4 +14,11 @@ public class Institution extends Personne {
         this.raisonSociale = raisonSociale;
     }
 
+    public void setAll(String ad, String tel, String email, String rs) {
+        this.adresse=ad;
+        this.telephone=tel;
+        this.email=email;
+        this.raisonSociale=rs;
+    }
+
 }

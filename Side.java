@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -8,13 +9,14 @@ public class Side extends JPanel {
 
     Interface interf;
     SideControl sctrl;
-    DeleteControl delctrl;
+    ArrayList<SideTextField> fields;
 
     public Side(Interface interf) {
 
         this.interf=interf;
         this.sctrl=new SideControl(interf);
-        this.delctrl=new DeleteControl(interf);
+
+        this.fields=new ArrayList<>();
 
         setLocation(interf.MENU + interf.CENTER, 0);
         setSize(interf.SIDE, interf.HEIGHT);
@@ -24,16 +26,30 @@ public class Side extends JPanel {
 
     }
 
+    private void addButtons(A38Object obj) {
+
+        EditButton edit = new EditButton(this, obj);
+        add(edit);
+
+        DeleteButton delete = new DeleteButton(this, obj);
+        add(delete);
+
+    }
+
+    private void setTitle(String s) {
+
+        JLabel title = new JLabel(s);
+        title.setFont(interf.sideTitleFont);
+        title.setForeground(Color.WHITE);
+        title.setSize(title.getPreferredSize());
+        title.setLocation(interf.SIDE / 2 - title.getWidth() / 2, 50);
+        add(title);
+
+    }
+
     public void showInstitution(Institution inst) {
 
-        removeAll();
-
-        JLabel rs = new JLabel(inst.getRaisonSociale());
-        rs.setFont(interf.sideTitleFont);
-        rs.setForeground(Color.WHITE);
-        rs.setSize(rs.getPreferredSize());
-        rs.setLocation(interf.SIDE / 2 - rs.getWidth() / 2, 50);
-        add(rs);
+        setTitle(inst.getRaisonSociale());
 
         SideLabel idl = new SideLabel("ID : " + inst.getId(), this, 50, 150);
         SideLabel adresse = new SideLabel("<html>Adresse : <br>" + inst.getAdresse() + "</html>", this, 50, 200);
@@ -45,24 +61,13 @@ public class Side extends JPanel {
         SideButton batiments = new SideButton(inst, interf.menu.batiments,  this, 25, 560);
         SideButton personnes = new SideButton(inst, interf.menu.personnes, this, 215, 560);
 
-        DeleteButton delete = new DeleteButton(inst);
-        delete.addMouseListener(delctrl);
-        add(delete);
-
-        repaint();
+        addButtons(inst);
 
     }
 
     public void showIndividu(Individu indiv) {
 
-        removeAll();
-
-        JLabel identite = new JLabel(indiv.getPrenom() + " " + indiv.getNom());
-        identite.setFont(interf.sideTitleFont);
-        identite.setForeground(Color.WHITE);
-        identite.setSize(identite.getPreferredSize());
-        identite.setLocation(interf.SIDE / 2 - identite.getWidth() / 2, 50);
-        add(identite);
+        setTitle(indiv.getPrenom() + " " + indiv.getNom());
 
         SideLabel idl = new SideLabel("ID : " + indiv.getId(), this, 50, 150);
         SideLabel status = new SideLabel("Status : " + indiv.getStatus(), this, 50, 200);
@@ -70,29 +75,13 @@ public class Side extends JPanel {
         SideLabel email = new SideLabel("<html>Mail : <br>" + indiv.getEmail() + "</html>", this, 50, 330);
         SideLabel telephone = new SideLabel("Tel : " + indiv.getTelephone(), this, 50, 410);
 
-        /*SideButton materiel = new SideButton("Institutions", menu.materiels, id, this, 25, 450);
-        SideButton emprunts = new SideButton("Institutions", menu.emprunts, id, this, 215, 450);
-        SideButton batiments = new SideButton("Institutions", menu.batiments, id, this, 25, 560);
-        SideButton personnes = new SideButton("Institutions", menu.personnes, id, this, 215, 560);*/
-
-        DeleteButton delete = new DeleteButton(indiv);
-        delete.addMouseListener(delctrl);
-        add(delete);
-
-        repaint();
+        addButtons(indiv);
 
     }
 
     public void showMateriel(Materiel mat) {
 
-        removeAll();
-
-        JLabel matl = new JLabel(mat.getModele());
-        matl.setFont(interf.sideTitleFont);
-        matl.setForeground(Color.WHITE);
-        matl.setSize(matl.getPreferredSize());
-        matl.setLocation(interf.SIDE / 2 - matl.getWidth() / 2, 50);
-        add(matl);
+        setTitle(mat.getModele());
 
         SideLabel idl = new SideLabel("ID : " + mat.getId(), this, 50, 150);
         SideLabel proprio = new SideLabel("Propriétaire : " + mat.getProprietaire().getRaisonSociale(), this, 50,
@@ -103,11 +92,7 @@ public class Side extends JPanel {
         SideLabel etat = new SideLabel("Etat : " + mat.getEtat(), this, 50, 330);
         SideLabel connec = new SideLabel("Connectique : " + mat.getConnectique(), this, 50, 360);
 
-        DeleteButton delete = new DeleteButton(mat);
-        delete.addMouseListener(delctrl);
-        add(delete);
-
-        repaint();
+        addButtons(mat);
 
     }
 
@@ -118,5 +103,44 @@ public class Side extends JPanel {
     public void showSalle(Salle salle) { }
 
     public void showArmoire(Armoire armoire) { }
+
+    public void editIndividu(Individu individu) { }
+
+    private void createField(String k, String v, int y) {
+
+        SideLabel label = new SideLabel(k, this, 50, y);
+        SideTextField field = new SideTextField(k, v, this, 50, y+30);
+        fields.add(field);
+        
+    }
+
+    public void editInstitution(Institution institution) { 
+
+        setTitle(institution.getRaisonSociale());
+
+        fields.clear();
+
+        SideLabel idl = new SideLabel("ID : " + institution.getId(), this, 50, 150);
+
+        createField("Raison sociale", institution.getRaisonSociale(), 200);
+        createField("Adresse", institution.getAdresse(), 280);
+        createField("Mail", institution.getEmail(), 360);
+        createField("Téléphone", institution.getTelephone(), 440);
+
+        SideSaveButton save = new SideSaveButton(this, institution, fields);
+        SideCancelButton cancel = new SideCancelButton(this, institution);
+
+    }
+
+    public void editMateriel(Materiel materiel) { }
+
+    public void editEmprunt(Emprunt emprunt) { }
+
+    public void editBatiment(Batiment batiment) { }
+    
+    public void editSalle(Salle salle) { } 
+
+    public void editArmoire(Armoire armoire) { }
+
 
 }

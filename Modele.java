@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Modele {
 
@@ -17,7 +18,7 @@ public class Modele {
     HashMap<Integer, Salle> salles;
     HashMap<Integer, Armoire> armoires;
 
-    public Modele(Connection conn) {   
+    public Modele(Connection conn) {
 
         this.conn = conn;
         initInstitutions();
@@ -29,7 +30,7 @@ public class Modele {
 
     }
 
-    /// INITIALISATION ///
+    ///// INITIALISATION /////
 
     private void initInstitutions() {
 
@@ -145,7 +146,7 @@ public class Modele {
             PreparedStatement ps = conn.prepareStatement("SELECT * FROM batiments");
             ResultSet rs = ps.executeQuery();
             batiments = new HashMap<Integer, Batiment>();
-            
+
             while (rs.next()) {
 
                 int id = rs.getInt("id");
@@ -216,6 +217,46 @@ public class Modele {
 
     }
 
+
+
+    ///// SAUVEGARDE /////
+
+    public void save(A38Object obj, Map<String, String> values) {
+
+        if (obj instanceof Institution) {
+
+            try {
+
+                Institution inst = (Institution) obj;
+
+                String ad=values.get("Adresse");
+                String tel=values.get("Téléphone");
+                String email=values.get("Mail");
+                String rs=values.get("Raison sociale");
+
+                PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE institutions SET adresse=?, telephone=?, email=?, raisonsocial=? WHERE id=?");
+                ps.setString(1, values.get("Adresse"));
+                ps.setString(2, values.get("Téléphone"));
+                ps.setString(3, values.get("Mail"));
+                ps.setString(4, values.get("Raison sociale"));
+                ps.setInt(5, inst.getId());
+                ps.executeUpdate();
+
+                inst.setAll(ad, tel, email, rs);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+    }
+
+
+
+    ///// GETTERS /////
+
     /// EMPRUNTS ///
 
     public ArrayList<Emprunt> getEmprunts(A38Object filter) {
@@ -245,8 +286,6 @@ public class Modele {
     public Emprunt getEmprunt(int id) {
         return emprunts.get(id);
     }
-
-
 
     /// MATERIELS ///
 
@@ -286,8 +325,6 @@ public class Modele {
 
     }
 
-
-
     /// INDIVIDUS ///
 
     public ArrayList<Individu> getIndividus(A38Object filter) {
@@ -310,30 +347,26 @@ public class Modele {
         return individus.get(id);
     }
 
-
-
     /// BATIMENTS ///
 
     public ArrayList<Batiment> getBatiments(A38Object filter) {
-        
-        if (filter==null)
+
+        if (filter == null)
             return new ArrayList<Batiment>(batiments.values());
 
         return null;
-        
+
     }
 
     public Batiment getBatiment(int id) {
         return batiments.get(id);
     }
 
-
-
     /// SALLES ///
 
     public ArrayList<Salle> getSalles(A38Object filter) {
 
-        if (filter==null)
+        if (filter == null)
             return new ArrayList<Salle>(salles.values());
 
         return null;
@@ -344,13 +377,11 @@ public class Modele {
         return salles.get(id);
     }
 
-
-
     /// ARMOIRES ///
 
     public ArrayList<Armoire> getArmoires(A38Object filter) {
 
-        if (filter==null)
+        if (filter == null)
             return new ArrayList<Armoire>(armoires.values());
 
         return null;
@@ -360,8 +391,6 @@ public class Modele {
     public Armoire getArmoire(int id) {
         return armoires.get(id);
     }
-
-
 
     /// INSTITUTIONS ///
 

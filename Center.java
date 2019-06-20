@@ -10,6 +10,8 @@ public class Center extends JPanel {
     Interface interf;
     CenterTableControl ctctrl;
     JScrollPane panneau;
+    String currentType;
+    A38Object filter;
 
     public Center(Interface interf) {
 
@@ -33,7 +35,23 @@ public class Center extends JPanel {
 
     }
 
-    public void showInstitutions(A38Object filter) {
+    public String getCurrentType() {
+        return this.currentType;
+    }
+
+    public void setCurrentType(String s) {
+        this.currentType=s;
+    }
+
+    public A38Object getFilter() {
+        return this.filter;
+    }
+
+    public void setFilter(A38Object obj) {
+        this.filter=obj;
+    }
+
+    public void showInstitutions() {
 
         removeAll();
 
@@ -52,7 +70,7 @@ public class Center extends JPanel {
                 i++;
             }
 
-            CenterTable table = new CenterTable(data, colonnes, interf, "Institutions");
+            CenterTable table = new CenterTable(data, colonnes, interf, currentType);
             table.addMouseListener(ctctrl);
             updatePanneau(table);
 
@@ -63,7 +81,7 @@ public class Center extends JPanel {
 
     }
 
-    public void showMateriels(A38Object filter) {
+    public void showMateriels() {
 
         removeAll();
 
@@ -81,7 +99,7 @@ public class Center extends JPanel {
                 data[i][3] = materiels.get(i).getEtat();
             }
 
-            CenterTable table = new CenterTable(data, colonnes, interf, "Matériels");
+            CenterTable table = new CenterTable(data, colonnes, interf, currentType);
             table.addMouseListener(ctctrl);
             updatePanneau(table);
 
@@ -92,14 +110,14 @@ public class Center extends JPanel {
 
     }
 
-    public void showEmprunts(A38Object filter) {
+    public void showEmprunts() {
 
         removeAll();
 
         String[] colonnes = { "ID", "Emprunteur", "Institution", "Statut" };
         Object[][] data = { { "0", "Tellier", "UEVE", "En cours" }, { "1", "Bouyer", "ENSiiE", "Terminé" } };
 
-        CenterTable table = new CenterTable(data, colonnes, interf, "emprunts");
+        CenterTable table = new CenterTable(data, colonnes, interf, currentType);
         table.addMouseListener(ctctrl);
         updatePanneau(table);
 
@@ -108,7 +126,7 @@ public class Center extends JPanel {
 
     }
 
-    public void showIndividus(A38Object filter) {
+    public void showIndividus() {
 
         removeAll();
 
@@ -131,7 +149,7 @@ public class Center extends JPanel {
 
             }
 
-            CenterTable table = new CenterTable(data, colonnes, interf, "Personnes");
+            CenterTable table = new CenterTable(data, colonnes, interf, currentType);
             table.addMouseListener(ctctrl);
             updatePanneau(table);
 
@@ -142,7 +160,7 @@ public class Center extends JPanel {
 
     }
 
-    public void showBatiments(A38Object filter) {
+    public void showBatiments() {
 
         removeAll();
 
@@ -161,7 +179,7 @@ public class Center extends JPanel {
                 data[i][4] = batiments.get(i).getResponsable().getPrenom() + " " + batiments.get(i).getResponsable().getNom();
             }
 
-            CenterTable table = new CenterTable(data, colonnes, interf, "Bâtiments");
+            CenterTable table = new CenterTable(data, colonnes, interf, currentType);
             table.addMouseListener(ctctrl);
             updatePanneau(table);
 
@@ -172,7 +190,7 @@ public class Center extends JPanel {
 
     }
 
-    public void showSalles(A38Object filter) {
+    public void showSalles() {
 
         removeAll();
 
@@ -191,7 +209,7 @@ public class Center extends JPanel {
                 data[i][4] = Integer.toString(salles.get(i).getSurface());
             }
 
-            CenterTable table = new CenterTable(data, colonnes, interf, "Salles");
+            CenterTable table = new CenterTable(data, colonnes, interf, currentType);
             table.addMouseListener(ctctrl);
             updatePanneau(table);
 
@@ -202,7 +220,7 @@ public class Center extends JPanel {
 
     }
 
-    public void showArmoires(A38Object filter) {
+    public void showArmoires() {
 
         removeAll();
 
@@ -220,7 +238,7 @@ public class Center extends JPanel {
                 data[i][3] = armoires.get(i).getLocalisation().getNom();
             }
 
-            CenterTable table = new CenterTable(data, colonnes, interf, "Armoires");
+            CenterTable table = new CenterTable(data, colonnes, interf, currentType);
             table.addMouseListener(ctctrl);
             updatePanneau(table);
 
@@ -230,5 +248,7 @@ public class Center extends JPanel {
             interf.changeTitle("Toutes les armoires");
 
     }
+
+
 
 }
