@@ -110,7 +110,7 @@ public class Center extends JPanel {
 
     }
 
-    public void showEmprunts() {
+    public void showEmprunts() { // A MODIFIER POUR ALIMENTER DYNAMIQUEMENT LA TABLE
 
         removeAll();
 

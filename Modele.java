@@ -27,6 +27,7 @@ public class Modele {
         initBatiments();
         initSalles();
         initArmoires();
+        initEmprunts();
 
     }
 
@@ -217,39 +218,113 @@ public class Modele {
 
     }
 
+    private void initEmprunts() { // TO FINISH
 
+        try {
+
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM emprunts");
+            ResultSet rs = ps.executeQuery();
+            emprunts = new HashMap<>();
+
+            while (rs.next()) {
+
+                int id = rs.getInt("id");
+                Salle salle = getSalle(rs.getInt("salle"));
+                String nom = rs.getString("nom");
+                Armoire armoire = new Armoire(id, nom, salle);
+                armoires.put(id, armoire);
+                salle.addArmoire(armoire);
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    
 
     ///// SAUVEGARDE /////
 
     public void save(A38Object obj, Map<String, String> values) {
 
-        if (obj instanceof Institution) {
+        if (obj instanceof Institution)
+            saveInstitution((Institution) obj, values);
+        if (obj instanceof Materiel)
+            saveMateriel((Materiel) obj, values);
+        if (obj instanceof Batiment)
+            saveBatiment((Batiment) obj, values);
+        if (obj instanceof Emprunt)
+            saveEmprunt((Emprunt) obj, values);
+        if (obj instanceof Salle)
+            saveSalle((Salle) obj, values);
+        if (obj instanceof Individu)
+            saveIndividu((Individu) obj, values);
+        if (obj instanceof Armoire)
+            saveArmoire((Armoire) obj, values);
 
-            try {
+    }
 
-                Institution inst = (Institution) obj;
+    public void saveInstitution(Institution obj, Map<String, String> values) {
 
-                String ad=values.get("Adresse");
-                String tel=values.get("Téléphone");
-                String email=values.get("Mail");
-                String rs=values.get("Raison sociale");
+        try {
 
-                PreparedStatement ps = conn.prepareStatement(
-                        "UPDATE institutions SET adresse=?, telephone=?, email=?, raisonsocial=? WHERE id=?");
-                ps.setString(1, values.get("Adresse"));
-                ps.setString(2, values.get("Téléphone"));
-                ps.setString(3, values.get("Mail"));
-                ps.setString(4, values.get("Raison sociale"));
-                ps.setInt(5, inst.getId());
-                ps.executeUpdate();
+            String ad = values.get("Adresse");
+            String tel = values.get("Téléphone");
+            String email = values.get("Mail");
+            String rs = values.get("Raison sociale");
 
-                inst.setAll(ad, tel, email, rs);
+            PreparedStatement ps = conn.prepareStatement(
+                    "UPDATE institutions SET adresse=?, telephone=?, email=?, raisonsocial=? WHERE id=?");
+            ps.setString(1, values.get("Adresse"));
+            ps.setString(2, values.get("Téléphone"));
+            ps.setString(3, values.get("Mail"));
+            ps.setString(4, values.get("Raison sociale"));
+            ps.setInt(5, obj.getId());
+            ps.executeUpdate();
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            obj.setAll(ad, tel, email, rs);
 
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+    }
+
+    public void saveMateriel(Materiel obj, Map<String, String> values) { 
+
+
+
+    }
+
+    public void saveBatiment(Batiment obj, Map<String, String> values) { 
+
+
+
+    }
+
+    public void saveArmoire(Armoire obj, Map<String, String> values) { 
+
+
+
+    }
+
+    public void saveSalle(Salle obj, Map<String, String> values) { 
+
+
+
+    }
+
+    public void saveIndividu(Individu obj, Map<String, String> values) { 
+
+
+
+    }
+
+    public void saveEmprunt(Emprunt obj, Map<String, String> values) { 
+
+
 
     }
 
