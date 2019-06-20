@@ -111,4 +111,12 @@ public class Side extends JPanel {
 
     }
 
+    public void showEmprunt(Emprunt emprunt) { }
+
+    public void showBatiment(Batiment batiment) { }
+
+    public void showSalle(Salle salle) { }
+
+    public void showArmoire(Armoire armoire) { }
+
 }

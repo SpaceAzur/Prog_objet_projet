@@ -161,7 +161,7 @@ public class Center extends JPanel {
                 data[i][4] = batiments.get(i).getResponsable().getPrenom() + " " + batiments.get(i).getResponsable().getNom();
             }
 
-            CenterTable table = new CenterTable(data, colonnes, interf, "Personnes");
+            CenterTable table = new CenterTable(data, colonnes, interf, "Bâtiments");
             table.addMouseListener(ctctrl);
             updatePanneau(table);
 
@@ -210,13 +210,14 @@ public class Center extends JPanel {
 
         if (armoires.size() > 0) {
 
-            String[] colonnes = { "ID", "Nom", "Localisation" };
-            String[][] data = new String[armoires.size()][3];
+            String[] colonnes = { "ID", "Nom", "Batiment", "Salle" };
+            String[][] data = new String[armoires.size()][4];
 
             for (int i = 0 ; i < armoires.size() ; i++) {
                 data[i][0] = Integer.toString(armoires.get(i).getId());
                 data[i][1] = armoires.get(i).getNom();
-                data[i][2] = armoires.get(i).getLocalisation().getNom();
+                data[i][2] = armoires.get(i).getLocalisation().getLocalisation().getNom();
+                data[i][3] = armoires.get(i).getLocalisation().getNom();
             }
 
             CenterTable table = new CenterTable(data, colonnes, interf, "Armoires");

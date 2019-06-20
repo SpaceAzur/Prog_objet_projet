@@ -13,7 +13,8 @@ public class CenterTableControl implements MouseListener {
         CenterTable table = (CenterTable) e.getSource();
         String type = table.getType();
         int row = table.getSelectedRow();
-        int id = Integer.parseInt((String) table.getValueAt(row, table.convertColumnIndexToView(table.getColumn("ID").getModelIndex())));
+        int id = Integer.parseInt(
+                (String) table.getValueAt(row, table.convertColumnIndexToView(table.getColumn("ID").getModelIndex())));
         A38Object obj = null;
 
         if (type.equals("Institutions"))
@@ -26,6 +27,10 @@ public class CenterTableControl implements MouseListener {
             obj = interf.mod.getEmprunt(id);
         else if (type.equals("Bâtiments"))
             obj = interf.mod.getBatiment(id);
+        else if (type.equals("Salles"))
+            obj = interf.mod.getSalle(id);
+        else if (type.equals("Armoires"))
+            obj = interf.mod.getArmoire(id);
 
         interf.showObject(obj);
 

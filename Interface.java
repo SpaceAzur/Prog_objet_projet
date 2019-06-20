@@ -51,6 +51,8 @@ public class Interface {
 
         fenetre.setVisible(true);
 
+        showObjects("Matériels", null);
+
     }
 
     public void initWindow() {
@@ -72,17 +74,32 @@ public class Interface {
             side.showInstitution((Institution) obj);
         if (obj instanceof Materiel)
             side.showMateriel((Materiel) obj);
+        if (obj instanceof Emprunt)
+            side.showEmprunt((Emprunt) obj);
+        if (obj instanceof Batiment)
+            side.showBatiment((Batiment) obj);
+        if (obj instanceof Salle)
+            side.showSalle((Salle) obj);
+        if (obj instanceof Armoire)
+            side.showArmoire((Armoire) obj);
     }
 
     public void showObjects(String type, A38Object filter) {
 
-        if (type.equals("Personnes")) center.showIndividus(filter);
-        if (type.equals("Emprunts")) center.showEmprunts(filter);
-        if (type.equals("Matériels")) center.showMateriels(filter);
-        if (type.equals("Institutions")) center.showInstitutions(filter);
-        if (type.equals("Bâtiments")) center.showBatiments(filter);
-        if (type.equals("Salles")) center.showSalles(filter);
-        if (type.equals("Armoires")) center.showArmoires(filter);
+        if (type.equals("Personnes"))
+            center.showIndividus(filter);
+        if (type.equals("Emprunts"))
+            center.showEmprunts(filter);
+        if (type.equals("Matériels"))
+            center.showMateriels(filter);
+        if (type.equals("Institutions"))
+            center.showInstitutions(filter);
+        if (type.equals("Bâtiments"))
+            center.showBatiments(filter);
+        if (type.equals("Salles"))
+            center.showSalles(filter);
+        if (type.equals("Armoires"))
+            center.showArmoires(filter);
 
     }
 
