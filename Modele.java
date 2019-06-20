@@ -145,7 +145,7 @@ public class Modele {
             PreparedStatement ps = conn.prepareStatement("SELECT * FROM batiments");
             ResultSet rs = ps.executeQuery();
             batiments = new HashMap<Integer, Batiment>();
-
+            
             while (rs.next()) {
 
                 int id = rs.getInt("id");
@@ -360,6 +360,7 @@ public class Modele {
     public Armoire getArmoire(int id) {
         return armoires.get(id);
     }
+
 
 
     /// INSTITUTIONS ///
