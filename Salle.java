@@ -4,8 +4,22 @@ public class Salle extends A38Object {
 
     private String nom;
     private int etage;
-    private double surface;
+    private int surface;
     private ArrayList<Armoire> armoires;
+    private Batiment localisation;
+
+    public void addArmoire(Armoire armoire) {
+        this.armoires.add(armoire);
+    }
+
+    public Salle(int id, int etage, int surface, String nom, Batiment localisation) {
+        this.id=id;
+        this.etage=etage;
+        this.surface=surface;
+        this.nom=nom;
+        this.localisation=localisation;
+        this.armoires=new ArrayList<Armoire>();
+    }
 
 
     public String getNom() {
@@ -24,11 +38,11 @@ public class Salle extends A38Object {
         this.etage = etage;
     }
 
-    public double getSurface() {
+    public int getSurface() {
         return this.surface;
     }
 
-    public void setSurface(double surface) {
+    public void setSurface(int surface) {
         this.surface = surface;
     }
 
@@ -40,5 +54,8 @@ public class Salle extends A38Object {
         this.armoires = armoires;
     }
 
+    public Batiment getLocalisation() {
+        return this.localisation;
+    }
 
 }

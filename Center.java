@@ -172,4 +172,62 @@ public class Center extends JPanel {
 
     }
 
+    public void showSalles(A38Object filter) {
+
+        removeAll();
+
+        ArrayList<Salle> salles = interf.mod.getSalles(filter);
+
+        if (salles.size() > 0) {
+
+            String[] colonnes = { "ID", "Nom", "Batiment", "Etage", "Surface" };
+            String[][] data = new String[salles.size()][5];
+
+            for (int i = 0 ; i < salles.size() ; i++) {
+                data[i][0] = Integer.toString(salles.get(i).getId());
+                data[i][1] = salles.get(i).getNom();
+                data[i][2] = salles.get(i).getLocalisation().getNom();
+                data[i][3] = Integer.toString(salles.get(i).getEtage());
+                data[i][4] = Integer.toString(salles.get(i).getSurface());
+            }
+
+            CenterTable table = new CenterTable(data, colonnes, interf, "Salles");
+            table.addMouseListener(ctctrl);
+            updatePanneau(table);
+
+        }
+
+        if (filter == null)
+            interf.changeTitle("Toutes les salles");
+
+    }
+
+    public void showArmoires(A38Object filter) {
+
+        removeAll();
+
+        ArrayList<Armoire> armoires = interf.mod.getArmoires(filter);
+
+        if (armoires.size() > 0) {
+
+            String[] colonnes = { "ID", "Nom", "Localisation" };
+            String[][] data = new String[armoires.size()][3];
+
+            for (int i = 0 ; i < armoires.size() ; i++) {
+                data[i][0] = Integer.toString(armoires.get(i).getId());
+                data[i][1] = armoires.get(i).getNom();
+                data[i][2] = armoires.get(i).getLocalisation().getNom();
+            }
+
+            CenterTable table = new CenterTable(data, colonnes, interf, "Armoires");
+            table.addMouseListener(ctctrl);
+            updatePanneau(table);
+
+        }
+
+        if (filter == null)
+            interf.changeTitle("Toutes les armoires");
+
+    }
+
 }

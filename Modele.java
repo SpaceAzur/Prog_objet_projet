@@ -14,19 +14,19 @@ public class Modele {
     HashMap<Integer, Institution> institutions;
     HashMap<Integer, Individu> individus;
     HashMap<Integer, Batiment> batiments;
+    HashMap<Integer, Salle> salles;
+    HashMap<Integer, Armoire> armoires;
 
-    public Modele(Connection conn) {
-        emprunts = new HashMap<Integer, Emprunt>();
-        materiels = new HashMap<Integer, Materiel>();
-        institutions = new HashMap<Integer, Institution>();
-        individus = new HashMap<Integer, Individu>();
-        batiments = new HashMap<Integer, Batiment>();
+    public Modele(Connection conn) {   
 
         this.conn = conn;
         initInstitutions();
         initIndividus();
         initMateriels();
         initBatiments();
+        initSalles();
+        initArmoires();
+
     }
 
     /// INITIALISATION ///
@@ -37,6 +37,7 @@ public class Modele {
 
             PreparedStatement ps = conn.prepareStatement("SELECT * FROM institutions");
             ResultSet rs = ps.executeQuery();
+            institutions = new HashMap<Integer, Institution>();
 
             while (rs.next()) {
                 int id = rs.getInt("id");
@@ -60,6 +61,7 @@ public class Modele {
 
             PreparedStatement ps = conn.prepareStatement("SELECT * FROM individus");
             ResultSet rs = ps.executeQuery();
+            individus = new HashMap<Integer, Individu>();
 
             while (rs.next()) {
                 int id = rs.getInt("id");
@@ -87,6 +89,7 @@ public class Modele {
 
             PreparedStatement ps = conn.prepareStatement("SELECT * FROM terminaux");
             ResultSet rs = ps.executeQuery();
+            materiels = new HashMap<Integer, Materiel>();
             SimpleDateFormat dateF = new SimpleDateFormat("dd/MM/yyyy");
 
             while (rs.next()) {
@@ -141,6 +144,7 @@ public class Modele {
 
             PreparedStatement ps = conn.prepareStatement("SELECT * FROM batiments");
             ResultSet rs = ps.executeQuery();
+            batiments = new HashMap<Integer, Batiment>();
 
             while (rs.next()) {
 
@@ -151,6 +155,58 @@ public class Modele {
                 Individu responsable = getIndividu(rs.getInt("responsable"));
 
                 batiments.put(id, new Batiment(id, adresse, nom, proprietaire, responsable));
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void initSalles() {
+
+        try {
+
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM salles");
+            ResultSet rs = ps.executeQuery();
+            salles = new HashMap<Integer, Salle>();
+
+            while (rs.next()) {
+
+                int id = rs.getInt("id");
+                Batiment batiment = getBatiment(rs.getInt("batiment"));
+                String nom = Integer.toString(rs.getInt("numsalle"));
+                int surface = rs.getInt("surface");
+                int etage = rs.getInt("etage");
+                Salle salle = new Salle(id, etage, surface, nom, batiment);
+                salles.put(id, salle);
+                batiment.addSalle(salle);
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void initArmoires() {
+
+        try {
+
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM armoires");
+            ResultSet rs = ps.executeQuery();
+            armoires = new HashMap<>();
+
+            while (rs.next()) {
+
+                int id = rs.getInt("id");
+                Salle salle = getSalle(rs.getInt("salle"));
+                String nom = rs.getString("nom");
+                Armoire armoire = new Armoire(id, nom, salle);
+                armoires.put(id, armoire);
+                salle.addArmoire(armoire);
 
             }
 
@@ -271,6 +327,39 @@ public class Modele {
         return batiments.get(id);
     }
 
+
+
+    /// SALLES ///
+
+    public ArrayList<Salle> getSalles(A38Object filter) {
+
+        if (filter==null)
+            return new ArrayList<Salle>(salles.values());
+
+        return null;
+
+    }
+
+    public Salle getSalle(int id) {
+        return salles.get(id);
+    }
+
+
+
+    /// ARMOIRES ///
+
+    public ArrayList<Armoire> getArmoires(A38Object filter) {
+
+        if (filter==null)
+            return new ArrayList<Armoire>(armoires.values());
+
+        return null;
+
+    }
+
+    public Armoire getArmoire(int id) {
+        return armoires.get(id);
+    }
 
 
     /// INSTITUTIONS ///

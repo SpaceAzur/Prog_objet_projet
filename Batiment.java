@@ -15,7 +15,12 @@ public class Batiment extends A38Object {
         this.nom=nom;
         this.proprietaire=proprietaire;
         this.responsable=responsable;
+        this.salles=new ArrayList<Salle>();
 
+    }
+
+    public void addSalle(Salle salle) {
+        salles.add(salle);
     }
 
     public String getAdresse() {
@@ -45,6 +50,5 @@ public class Batiment extends A38Object {
     public Individu getResponsable() {
         return this.responsable;
     }
-
 
 }

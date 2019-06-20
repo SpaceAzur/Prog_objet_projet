@@ -3,9 +3,15 @@ import java.util.ArrayList;
 public class Armoire extends A38Object {
 
     private String nom;
-    private int nbEtageres;
     private ArrayList<Materiel> materiels;
+    private Salle localisation;
 
+    public Armoire(int id, String nom, Salle localisation) {
+        this.id=id;
+        this.nom=nom;
+        this.localisation=localisation;
+        this.materiels=new ArrayList<Materiel>();
+    }
 
     public String getNom() {
         return this.nom;
@@ -15,20 +21,16 @@ public class Armoire extends A38Object {
         this.nom = nom;
     }
 
-    public int getNbEtageres() {
-        return this.nbEtageres;
-    }
-
-    public void setNbEtageres(int nbEtageres) {
-        this.nbEtageres = nbEtageres;
-    }
-
     public ArrayList<Materiel> getMateriels() {
         return this.materiels;
     }
 
     public void setMateriels(ArrayList<Materiel> materiels) {
         this.materiels = materiels;
+    }
+
+    public Salle getLocalisation() {
+        return this.localisation;
     }
 
 

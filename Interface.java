@@ -81,6 +81,8 @@ public class Interface {
         if (type.equals("Matériels")) center.showMateriels(filter);
         if (type.equals("Institutions")) center.showInstitutions(filter);
         if (type.equals("Bâtiments")) center.showBatiments(filter);
+        if (type.equals("Salles")) center.showSalles(filter);
+        if (type.equals("Armoires")) center.showArmoires(filter);
 
     }
 

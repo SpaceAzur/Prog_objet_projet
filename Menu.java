@@ -11,6 +11,8 @@ public class Menu extends JPanel {
     MenuButton emprunts;
     MenuButton institutions;
     MenuButton batiments;
+    MenuButton salles;
+    MenuButton armoires;
     MenuButton personnes;
 
     MenuButton current;
@@ -37,6 +39,9 @@ public class Menu extends JPanel {
         institutions = new MenuButton("Institutions", mctrl, interf, 210);
         personnes = new MenuButton("Personnes", mctrl, interf, 265);
         batiments = new MenuButton("Bâtiments", mctrl, interf, 320);
+        salles = new MenuButton("Salles", mctrl, interf, 375);
+        armoires = new MenuButton("Armoires", mctrl, interf, 430);
+        
 
         this.add(a38);
         this.add(materiels);
@@ -44,6 +49,8 @@ public class Menu extends JPanel {
         this.add(institutions);
         this.add(batiments);
         this.add(personnes);
+        this.add(salles);
+        this.add(armoires);
 
     }
 
