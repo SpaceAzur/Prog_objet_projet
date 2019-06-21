@@ -5,7 +5,6 @@ public class Terminal extends Materiel {
     private int xResolution;
     private int yResolution;
 
-
     public String getOS() {
         return this.OS;
     }

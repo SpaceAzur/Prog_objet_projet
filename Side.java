@@ -3,6 +3,8 @@ import java.awt.Insets;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
@@ -11,14 +13,14 @@ public class Side extends JPanel {
 
     Interface interf;
     SideControl sctrl;
-    ArrayList<SideTextField> fields;
+    ArrayList<JComponent> fields;
 
     public Side(Interface interf) {
 
-        this.interf=interf;
-        this.sctrl=new SideControl(interf);
+        this.interf = interf;
+        this.sctrl = new SideControl(interf);
 
-        this.fields=new ArrayList<>();
+        this.fields = new ArrayList<>();
 
         setLocation(interf.MENU + interf.CENTER, 0);
         setSize(interf.SIDE, interf.HEIGHT);
@@ -44,7 +46,7 @@ public class Side extends JPanel {
         title.setFont(interf.sideTitleFont);
         title.setForeground(Color.WHITE);
         title.setSize(title.getPreferredSize());
-        title.setLocation(interf.SIDE / 2 - title.getWidth() / 2, 50);
+        title.setLocation(interf.SIDE / 2 - title.getWidth() / 2, 35);
         add(title);
 
     }
@@ -53,9 +55,9 @@ public class Side extends JPanel {
         removeAll();
         setTitle("Erreur");
         JTextArea err = new JTextArea(e);
-        err.setSize(300,100);
-        err.setMargin(new Insets(10,10,10,10));
-        err.setLocation(50,150);
+        err.setSize(300, 100);
+        err.setMargin(new Insets(10, 10, 10, 10));
+        err.setLocation(50, 150);
         err.setLineWrap(true);
         err.setEditable(false);
         add(err);
@@ -73,7 +75,7 @@ public class Side extends JPanel {
 
         SideButton materiel = new SideButton(inst, interf.menu.materiels, this, 25, 450);
         SideButton emprunts = new SideButton(inst, interf.menu.emprunts, this, 215, 450);
-        SideButton batiments = new SideButton(inst, interf.menu.batiments,  this, 25, 560);
+        SideButton batiments = new SideButton(inst, interf.menu.batiments, this, 25, 560);
         SideButton personnes = new SideButton(inst, interf.menu.personnes, this, 215, 560);
 
         addButtons(inst);
@@ -99,8 +101,7 @@ public class Side extends JPanel {
         setTitle(mat.getModele());
 
         SideLabel idl = new SideLabel("ID : " + mat.getId(), this, 50, 150);
-        SideLabel proprio = new SideLabel("Propriétaire : " + mat.getProprietaire().getRaisonSociale(), this, 50,
-                180);
+        SideLabel proprio = new SideLabel("Propriétaire : " + mat.getProprietaire().getRaisonSociale(), this, 50, 180);
         SideLabel marque = new SideLabel("Marque : " + mat.getMarque(), this, 50, 210);
         SideLabel prix = new SideLabel("Prix : " + mat.getPrixAchat(), this, 50, 240);
         SideLabel date = new SideLabel("<html>Date d'achat : <br>" + mat.getDateAchat() + "</html>", this, 50, 270);
@@ -111,25 +112,58 @@ public class Side extends JPanel {
 
     }
 
-    public void showEmprunt(Emprunt emprunt) { }
+    public void showEmprunt(Emprunt emprunt) {
+    }
 
-    public void showBatiment(Batiment batiment) { }
+    public void showBatiment(Batiment batiment) {
+    }
 
-    public void showSalle(Salle salle) { }
+    public void showSalle(Salle salle) {
+    }
 
-    public void showArmoire(Armoire armoire) { }
+    public void showArmoire(Armoire armoire) {
+    }
 
-    public void editIndividu(Individu individu) { }
+    public void editIndividu(Individu individu) {
+    }
 
     private void createField(String k, String v, int y) {
 
         SideLabel label = new SideLabel(k, this, 50, y);
-        SideTextField field = new SideTextField(k, v, this, 50, y+30);
+        SideTextField field = new SideTextField(k, v, this, 50, y + 30);
         fields.add(field);
-        
+
     }
 
-    public void editInstitution(Institution institution) { 
+    private void createFieldLateral(String k, String v, int y, boolean little) {
+        SideLabel label = new SideLabel(k, this, 50, y);
+        SideTextField field;
+        if (little) {
+            field = new SideTextField(k, v, this, 200, y - 7);
+            field.setSize(150, 35);
+        } else {
+            field = new SideTextField(k, v, this, 150, y - 7);
+            field.setSize(200, 35);
+        }
+        fields.add(field);
+    }
+
+    private SideComboBox createDropdownLateral(String k, String[] vals, int y, boolean little) {
+        SideLabel label = new SideLabel(k, this, 50, y);
+        SideComboBox combo = new SideComboBox(k, vals);
+        if (little) {
+            combo.setLocation(200, y - 7);
+            combo.setSize(150, 35);
+        } else {
+            combo.setLocation(150, y - 7);
+            combo.setSize(200, 35);
+        }
+        add(combo);
+        fields.add(combo);
+        return combo;
+    }
+
+    public void editInstitution(Institution institution) {
 
         setTitle(institution.getRaisonSociale());
 
@@ -147,23 +181,57 @@ public class Side extends JPanel {
 
     }
 
-    public void editMateriel(Materiel materiel) { }
+    public void editMateriel(Materiel materiel) {
+    }
 
-    public void editEmprunt(Emprunt emprunt) { }
+    public void editEmprunt(Emprunt emprunt) {
+    }
 
-    public void editBatiment(Batiment batiment) { }
-    
-    public void editSalle(Salle salle) { } 
+    public void editBatiment(Batiment batiment) {
+    }
 
-    public void editArmoire(Armoire armoire) { }
+    public void editSalle(Salle salle) {
+    }
 
-    public void newIndividu(A38Object filter) { }
+    public void editArmoire(Armoire armoire) {
+    }
 
-    public void newEmprunt(A38Object filter) { }
+    public void newIndividu(A38Object filter) {
+    }
 
-    public void newMateriel(A38Object filter) { }
+    public void newEmprunt(A38Object filter) {
+    }
 
-    public void newInstitution(A38Object filter) { 
+    public void newMateriel(A38Object filter) {
+
+        setTitle("Nouveau matériel");
+
+        fields.clear();
+        
+        ArrayList<Institution> institutions = new ArrayList<Institution>(interf.mod.getInstitutions().values());
+        String[] proprietaires=new String[institutions.size()];
+        for (int i=0 ; i<institutions.size() ; i++) {
+            proprietaires[i]=institutions.get(i).getRaisonSociale();
+        }
+
+        createFieldLateral("Nature", "", 120, false);
+        createFieldLateral("Modèle", "", 180, false);
+        createFieldLateral("Marque", "", 240, false);
+        createDropdownLateral("Type", new String[] { "terminaux", "peripheriques" }, 300, false);
+        createFieldLateral("Prix d'achat", "", 360, true);
+        createFieldLateral("Date d'achat", "", 420, true);
+        createFieldLateral("Etat", "", 480, false);
+        SideComboBox proprio = createDropdownLateral("Propriétaire", proprietaires, 540, true);
+        if (filter instanceof Institution) {
+            Institution inst = (Institution) filter;
+            proprio.setSelectedItem(inst.getRaisonSociale());
+        }
+
+        SideSaveButton save = new SideSaveButton(this, null, fields);
+
+    }
+
+    public void newInstitution(A38Object filter) {
 
         setTitle("Nouvelle Institution");
 
@@ -175,13 +243,16 @@ public class Side extends JPanel {
         createField("Téléphone", "", 440);
 
         SideSaveButton save = new SideSaveButton(this, null, fields);
-        
+
     }
 
-    public void newBatiment(A38Object filter) { }
+    public void newBatiment(A38Object filter) {
+    }
 
-    public void newSalle(A38Object filter) { }
+    public void newSalle(A38Object filter) {
+    }
 
-    public void newArmoire(A38Object filter) { }
+    public void newArmoire(A38Object filter) {
+    }
 
 }

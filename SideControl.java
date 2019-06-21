@@ -51,7 +51,7 @@ public class SideControl implements MouseListener {
                 obj = mod.save(bouton.getObj(), bouton.getValues(), bouton.getType());
                 interf.showObject(obj);
                 interf.refreshObjects();
-            } catch (SQLException se) {
+            } catch (Exception se) {
                 interf.showError(se.getMessage());
             }
 

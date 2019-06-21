@@ -11,6 +11,19 @@ public class Materiel extends A38Object {
     protected String etat;
     protected String[] connectique;
 
+    public void setAll(Institution proprio, String modele, String nature, String marque, double prixAchat,
+            Date dateAchat, String etat) {
+
+                this.proprietaire=proprio;
+                this.modele=modele;
+                this.nature=nature;
+                this.marque=marque;
+                this.prixAchat=prixAchat;
+                this.dateAchat=dateAchat;
+                this.etat=etat;
+
+    }
+
     public Institution getProprietaire() {
         return this.proprietaire;
     }
@@ -68,7 +81,7 @@ public class Materiel extends A38Object {
     }
 
     public void setNature(String nature) {
-        this.nature=nature;
+        this.nature = nature;
     }
 
 }

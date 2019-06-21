@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -10,10 +11,10 @@ import javax.swing.JTextField;
 public class SideSaveButton extends JPanel {
 
     A38Object obj;
-    ArrayList<SideTextField> fields;
+    ArrayList<JComponent> fields;
     String type;
 
-    public SideSaveButton(Side side, A38Object obj, ArrayList<SideTextField> fields) {
+    public SideSaveButton(Side side, A38Object obj, ArrayList<JComponent> fields) {
         
         this.setSize(125,65);
         this.setLocation(50, 580);
@@ -46,7 +47,14 @@ public class SideSaveButton extends JPanel {
         Map<String, String> values = new HashMap<>();
 
         for (int i=0 ; i<fields.size() ; i++) {
-            values.put(fields.get(i).getKey(), fields.get(i).getVal());
+            if (fields.get(i) instanceof SideTextField) {
+                SideTextField item = (SideTextField) fields.get(i);
+                values.put(item.getKey(), item.getVal());
+            }
+            if (fields.get(i) instanceof SideComboBox)  {
+                SideComboBox item = (SideComboBox) fields.get(i);
+                values.put(item.getKey(), (String) item.getSelectedItem());
+            }
         }
 
         return values;

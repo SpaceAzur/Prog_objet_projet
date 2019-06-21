@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,6 +16,8 @@ public class Modele {
     HashMap<Integer, Batiment> batiments;
     HashMap<Integer, Salle> salles;
     HashMap<Integer, Armoire> armoires;
+
+    SimpleDateFormat dateF = new SimpleDateFormat("dd/MM/yyyy");
 
     public Modele(Connection conn) {
 
@@ -90,7 +93,6 @@ public class Modele {
             PreparedStatement ps = conn.prepareStatement("SELECT * FROM terminaux");
             ResultSet rs = ps.executeQuery();
             materiels = new HashMap<Integer, Materiel>();
-            SimpleDateFormat dateF = new SimpleDateFormat("dd/MM/yyyy");
 
             while (rs.next()) {
 
@@ -243,7 +245,7 @@ public class Modele {
 
     ///// SAUVEGARDE /////
 
-    public A38Object save(A38Object obj, Map<String, String> values, String type) throws SQLException {
+    public A38Object save(A38Object obj, Map<String, String> values, String type) throws SQLException, ParseException {
 
         A38Object result = null;
 
@@ -295,9 +297,8 @@ public class Modele {
 
         int affectedRows = ps.executeUpdate();
 
-        if (affectedRows == 0) {
+        if (affectedRows == 0)
             throw new SQLException("Creation/update failed, no rows affected.");
-        }
 
         if (obj != null)
             obj.setAll(ad, tel, email, rs);
@@ -318,7 +319,61 @@ public class Modele {
 
     }
 
-    public void saveMateriel(Materiel obj, Map<String, String> values) {
+    public void saveMateriel(Materiel obj, Map<String, String> values) throws SQLException, ParseException {
+
+        int idProprio = getInstitution(values.get("Propriétaire")).getId();
+        String modele = values.get("Modèle");
+        String nature = values.get("Nature");
+        String marque = values.get("Marque");
+        double prix = Double.valueOf(values.get("Prix d'achat"));
+        String date = values.get("Date d'achat");
+        String etat = values.get("Etat");
+        String type = values.get("Type");
+
+        PreparedStatement ps;
+
+        Materiel mat = null;
+
+        if (obj != null) {
+            ps = conn.prepareStatement("UPDATE " + type
+                    + " SET proprietaire=?, nature=?, modele=?, marque=?, prixachat=?, dateachat=?, etat=? WHERE id=?");
+        } else
+            ps = conn.prepareStatement("INSERT INTO " + type
+                    + "(proprietaire, nature, modele, marque, prixachat, dateachat, etat) VALUES(?,?,?,?,?,?,?)",
+                    Statement.RETURN_GENERATED_KEYS);
+
+        ps.setInt(1, idProprio);
+        ps.setString(2, modele);
+        ps.setString(3, nature);
+        ps.setString(4, marque);
+        ps.setDouble(5, prix);
+        ps.setString(6, date);
+        ps.setString(7, etat);
+        if (obj != null)
+            ps.setInt(8, obj.getId());
+
+        int affectedRows = ps.executeUpdate();
+
+        if (affectedRows == 0)
+            throw new SQLException("Creation/update failed, no rows affected.");
+
+        if (obj != null)
+            obj.setAll(getInstitution(idProprio), modele, nature, marque, prix, dateF.parse(date), etat);
+        
+        else {
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int id = generatedKeys.getInt(1);
+                    if (type.equals("terminaux")) mat = new Terminal();
+                    else if (type.equals("peripheriques")) mat = new Terminal();
+                    mat.setId(id);
+                    mat.setAll(getInstitution(idProprio), modele, nature, marque, prix, dateF.parse(date), etat);
+                    materiels.put(id, mat);
+                }
+            }
+
+            
+        }
 
     }
 
@@ -487,6 +542,16 @@ public class Modele {
 
     public Institution getInstitution(int id) {
         return institutions.get(id);
+    }
+
+    public Institution getInstitution(String name) {
+
+        for (Institution institution : institutions.values()) {
+            if (institution.getRaisonSociale().equals(name))
+                return institution;
+        }
+        return null;
+
     }
 
     public void deleteInstitution(Institution per) {
