@@ -5,7 +5,6 @@ import javax.swing.*;
 public class AddButton extends JPanel {
 
     Center center;
-
     public AddButton(Center center) {
 
         this.center=center;
@@ -17,6 +16,10 @@ public class AddButton extends JPanel {
 
     public String getType() {
         return center.getCurrentType();
+    }
+
+    public A38Object getFilter() {
+        return center.getFilter();
     }
 
 }

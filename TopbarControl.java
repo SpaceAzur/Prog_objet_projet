@@ -13,7 +13,7 @@ public class TopbarControl implements MouseListener {
         if (e.getSource() instanceof AddButton) {
 
             AddButton bouton = (AddButton) e.getSource();
-            interf.newObject(bouton.getType());
+            interf.newObject(bouton.getType(), bouton.getFilter());
 
         }
 

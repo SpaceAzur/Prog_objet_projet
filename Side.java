@@ -157,13 +157,13 @@ public class Side extends JPanel {
 
     public void editArmoire(Armoire armoire) { }
 
-    public void newIndividu() { }
+    public void newIndividu(A38Object filter) { }
 
-    public void newEmprunt() { }
+    public void newEmprunt(A38Object filter) { }
 
-    public void newMateriel() { }
+    public void newMateriel(A38Object filter) { }
 
-    public void newInstitution() { 
+    public void newInstitution(A38Object filter) { 
 
         setTitle("Nouvelle Institution");
 
@@ -178,10 +178,10 @@ public class Side extends JPanel {
         
     }
 
-    public void newBatiment() { }
+    public void newBatiment(A38Object filter) { }
 
-    public void newSalle() { }
+    public void newSalle(A38Object filter) { }
 
-    public void newArmoire() { }
+    public void newArmoire(A38Object filter) { }
 
 }

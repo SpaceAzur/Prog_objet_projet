@@ -108,23 +108,23 @@ public class Interface {
 
     }
 
-    public void newObject(String type) {
+    public void newObject(String type, A38Object filter) {
 
         side.removeAll();
         if (type.equals("Personnes"))
-            side.newIndividu();
+            side.newIndividu(filter);
         if (type.equals("Emprunts"))
-            side.newEmprunt();
+            side.newEmprunt(filter);
         if (type.equals("Matériels"))
-            side.newMateriel();
+            side.newMateriel(filter);
         if (type.equals("Institutions"))
-            side.newInstitution();
+            side.newInstitution(filter);
         if (type.equals("Bâtiments"))
-            side.newBatiment();
+            side.newBatiment(filter);
         if (type.equals("Salles"))
-            side.newSalle();
+            side.newSalle(filter);
         if (type.equals("Armoires"))
-            side.newArmoire();
+            side.newArmoire(filter);
         side.repaint();
 
     }
