@@ -11,6 +11,7 @@ public class SideSaveButton extends JPanel {
 
     A38Object obj;
     ArrayList<SideTextField> fields;
+    String type;
 
     public SideSaveButton(Side side, A38Object obj, ArrayList<SideTextField> fields) {
         
@@ -20,6 +21,7 @@ public class SideSaveButton extends JPanel {
         this.setLayout(null);
         this.obj=obj;
         this.fields=fields;
+        this.type=side.interf.center.getCurrentType();
 
         JLabel label = new JLabel("Valider");
         label.setFont(side.interf.sideFont);
@@ -49,6 +51,10 @@ public class SideSaveButton extends JPanel {
 
         return values;
 
+    }
+
+    public String getType() {
+        return this.type;
     }
 
 }

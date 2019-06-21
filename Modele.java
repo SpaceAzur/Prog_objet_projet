@@ -1,6 +1,4 @@
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -243,92 +241,106 @@ public class Modele {
 
     }
 
-    
-
     ///// SAUVEGARDE /////
 
-    public void save(A38Object obj, Map<String, String> values) {
+    public A38Object save(A38Object obj, Map<String, String> values, String type) throws SQLException {
 
-        if (obj instanceof Institution)
-            saveInstitution((Institution) obj, values);
-        if (obj instanceof Materiel)
+        A38Object result = null;
+
+        if (obj instanceof Institution || type.equals("Institutions"))
+            result = saveInstitution((Institution) obj, values);
+        if (obj instanceof Materiel || type.equals("Matériels"))
             saveMateriel((Materiel) obj, values);
-        if (obj instanceof Batiment)
+        if (obj instanceof Batiment || type.equals("Bâtiments"))
             saveBatiment((Batiment) obj, values);
-        if (obj instanceof Emprunt)
+        if (obj instanceof Emprunt || type.equals("Emprunts"))
             saveEmprunt((Emprunt) obj, values);
-        if (obj instanceof Salle)
+        if (obj instanceof Salle || type.equals("Salles"))
             saveSalle((Salle) obj, values);
-        if (obj instanceof Individu)
+        if (obj instanceof Individu || type.equals("Personnes"))
             saveIndividu((Individu) obj, values);
-        if (obj instanceof Armoire)
+        if (obj instanceof Armoire || type.equals("Armoires"))
             saveArmoire((Armoire) obj, values);
 
+        return result;
+
     }
 
-    public void saveInstitution(Institution obj, Map<String, String> values) {
+    public Institution saveInstitution(Institution obj, Map<String, String> values) throws SQLException {
 
-        try {
+        String ad = values.get("Adresse");
+        String tel = values.get("Téléphone");
+        String email = values.get("Mail");
+        String rs = values.get("Raison sociale");
 
-            String ad = values.get("Adresse");
-            String tel = values.get("Téléphone");
-            String email = values.get("Mail");
-            String rs = values.get("Raison sociale");
+        PreparedStatement ps;
 
-            PreparedStatement ps = conn.prepareStatement(
-                    "UPDATE institutions SET adresse=?, telephone=?, email=?, raisonsocial=? WHERE id=?");
-            ps.setString(1, values.get("Adresse"));
-            ps.setString(2, values.get("Téléphone"));
-            ps.setString(3, values.get("Mail"));
-            ps.setString(4, values.get("Raison sociale"));
+        Institution inst = null;
+
+        if (obj != null) {
+            ps = conn.prepareStatement(
+                    "UPDATE institutions SET raisonsocial=?, adresse=?, telephone=?, email=? WHERE id=?");
+            inst = obj;
+        } else
+            ps = conn.prepareStatement(
+                    "INSERT INTO institutions(raisonsocial, adresse, telephone, email) VALUES(?,?,?,?)",
+                    Statement.RETURN_GENERATED_KEYS);
+
+        ps.setString(2, ad);
+        ps.setString(3, tel);
+        ps.setString(4, email);
+        ps.setString(1, rs);
+        if (obj != null)
             ps.setInt(5, obj.getId());
-            ps.executeUpdate();
 
-            obj.setAll(ad, tel, email, rs);
+        int affectedRows = ps.executeUpdate();
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (affectedRows == 0) {
+            throw new SQLException("Creation/update failed, no rows affected.");
         }
 
-    }
+        if (obj != null)
+            obj.setAll(ad, tel, email, rs);
 
-    public void saveMateriel(Materiel obj, Map<String, String> values) { 
+        else {
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int id = generatedKeys.getInt(1);
+                    institutions.put(id, new Institution(id, ad, tel, email, rs));
+                    inst = institutions.get(id);
+                } else {
+                    throw new SQLException("Creating user failed, no ID obtained.");
+                }
+            }
+        }
 
-
-
-    }
-
-    public void saveBatiment(Batiment obj, Map<String, String> values) { 
-
-
-
-    }
-
-    public void saveArmoire(Armoire obj, Map<String, String> values) { 
-
-
-
-    }
-
-    public void saveSalle(Salle obj, Map<String, String> values) { 
-
-
+        return inst;
 
     }
 
-    public void saveIndividu(Individu obj, Map<String, String> values) { 
-
-
+    public void saveMateriel(Materiel obj, Map<String, String> values) {
 
     }
 
-    public void saveEmprunt(Emprunt obj, Map<String, String> values) { 
-
-
+    public void saveBatiment(Batiment obj, Map<String, String> values) {
 
     }
 
+    public void saveArmoire(Armoire obj, Map<String, String> values) {
 
+    }
+
+    public void saveSalle(Salle obj, Map<String, String> values) {
+
+    }
+
+    public void saveIndividu(Individu obj, Map<String, String> values) {
+
+    }
+
+    public void saveEmprunt(Emprunt obj, Map<String, String> values) {
+
+    }
 
     ///// GETTERS /////
 

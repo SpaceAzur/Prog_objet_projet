@@ -8,10 +8,12 @@ public class Topbar extends JPanel {
 
     Interface interf;
     JLabel title;
+    TopbarControl topctrl;
 
     public Topbar(Interface interf) {
 
         this.interf=interf;
+        topctrl = new TopbarControl(interf);
         
         setLocation(interf.MENU, 0);
         setSize(interf.CENTER, interf.TOPBAR);
@@ -24,6 +26,10 @@ public class Topbar extends JPanel {
         title.setForeground(Color.WHITE);
         title.setLocation(30, 15);
         add(title);
+
+        AddButton ajout = new AddButton(interf.center);
+        ajout.addMouseListener(topctrl);
+        add(ajout);
 
     }
 

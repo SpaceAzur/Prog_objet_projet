@@ -1,8 +1,5 @@
 import java.awt.*;
-import java.util.*;
-
 import javax.swing.*;
-import javax.swing.border.*;
 
 public class Interface {
 
@@ -86,6 +83,7 @@ public class Interface {
         if (obj instanceof Armoire)
             side.showArmoire((Armoire) obj);
         side.repaint();
+        
     }
 
     public void showObjects(String type, A38Object filter) {
@@ -110,6 +108,27 @@ public class Interface {
 
     }
 
+    public void newObject(String type) {
+
+        side.removeAll();
+        if (type.equals("Personnes"))
+            side.newIndividu();
+        if (type.equals("Emprunts"))
+            side.newEmprunt();
+        if (type.equals("Matériels"))
+            side.newMateriel();
+        if (type.equals("Institutions"))
+            side.newInstitution();
+        if (type.equals("Bâtiments"))
+            side.newBatiment();
+        if (type.equals("Salles"))
+            side.newSalle();
+        if (type.equals("Armoires"))
+            side.newArmoire();
+        side.repaint();
+
+    }
+
     public void changeTitle(String t) {
         topbar.changeTitle(t);
     }
@@ -120,6 +139,10 @@ public class Interface {
 
     public void refreshObjects() {
         showObjects(center.getCurrentType(), center.getFilter());
+    }
+
+    public void showError(String e) {
+        side.showError(e);
     }
 
     public void editItem(A38Object obj) {

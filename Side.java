@@ -1,9 +1,11 @@
 import java.awt.Color;
+import java.awt.Insets;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 public class Side extends JPanel {
 
@@ -45,6 +47,19 @@ public class Side extends JPanel {
         title.setLocation(interf.SIDE / 2 - title.getWidth() / 2, 50);
         add(title);
 
+    }
+
+    public void showError(String e) {
+        removeAll();
+        setTitle("Erreur");
+        JTextArea err = new JTextArea(e);
+        err.setSize(300,100);
+        err.setMargin(new Insets(10,10,10,10));
+        err.setLocation(50,150);
+        err.setLineWrap(true);
+        err.setEditable(false);
+        add(err);
+        repaint();
     }
 
     public void showInstitution(Institution inst) {
@@ -142,5 +157,31 @@ public class Side extends JPanel {
 
     public void editArmoire(Armoire armoire) { }
 
+    public void newIndividu() { }
+
+    public void newEmprunt() { }
+
+    public void newMateriel() { }
+
+    public void newInstitution() { 
+
+        setTitle("Nouvelle Institution");
+
+        fields.clear();
+
+        createField("Raison sociale", "", 200);
+        createField("Adresse", "", 280);
+        createField("Mail", "", 360);
+        createField("Téléphone", "", 440);
+
+        SideSaveButton save = new SideSaveButton(this, null, fields);
+        
+    }
+
+    public void newBatiment() { }
+
+    public void newSalle() { }
+
+    public void newArmoire() { }
 
 }
