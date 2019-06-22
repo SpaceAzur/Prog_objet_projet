@@ -38,7 +38,6 @@ public class Side extends JPanel {
 
         DeleteButton delete = new DeleteButton(this, obj);
         add(delete);
-
     }
 
     private void setTitle(String s) {
@@ -74,10 +73,12 @@ public class Side extends JPanel {
         SideLabel email = new SideLabel("<html>Mail : <br>" + inst.getEmail() + "</html>", this, 50, 280);
         SideLabel telephone = new SideLabel("Tel : " + inst.getTelephone(), this, 50, 360);
 
-        SideButton materiel = new SideButton(inst, interf.menu.materiels, this, 25, 450);
-        SideButton emprunts = new SideButton(inst, interf.menu.emprunts, this, 215, 450);
-        SideButton batiments = new SideButton(inst, interf.menu.batiments, this, 25, 560);
-        SideButton personnes = new SideButton(inst, interf.menu.personnes, this, 215, 560);
+        SideButton materiel = new SideButton(inst, interf.menu.materiels, this, 25, 440);
+        SideButton emprunts = new SideButton(inst, interf.menu.emprunts, this, 215, 440);
+        SideButton batiments = new SideButton(inst, interf.menu.batiments, this, 25, 520);
+        SideButton personnes = new SideButton(inst, interf.menu.personnes, this, 215, 520);
+        SideButton salles = new SideButton(inst, interf.menu.salles, this, 25, 600);
+        SideButton armoires = new SideButton(inst, interf.menu.armoires, this, 215, 600);
 
         addButtons(inst);
 
@@ -92,6 +93,10 @@ public class Side extends JPanel {
         SideLabel adresse = new SideLabel("<html>Adresse : <br>" + indiv.getAdresse() + "</html>", this, 50, 250);
         SideLabel email = new SideLabel("<html>Mail : <br>" + indiv.getEmail() + "</html>", this, 50, 330);
         SideLabel telephone = new SideLabel("Tel : " + indiv.getTelephone(), this, 50, 410);
+        SideLabel institution = new SideLabel("<html>Institution : <br>" + indiv.getInstitution().getRaisonSociale(), this, 50, 460);
+
+        SideButton materiel = new SideButton(indiv, interf.menu.emprunts, this, 25, 600);
+        SideButton batiment = new SideButton(indiv, interf.menu.batiments, this, 215, 600);
 
         addButtons(indiv);
 
@@ -113,7 +118,6 @@ public class Side extends JPanel {
             SideLabel os = new SideLabel("OS : " + ter.getOS() , this, 50, 390);
             SideLabel taille = new SideLabel("Ecran(\") : " + ter.getTailleEcran(), this, 50, 420);
             SideLabel reso = new SideLabel("Resolution : " + ter.getXResolution() + "*" + ter.getYResolution(), this, 50, 450);
-
         }
 
         addButtons(mat);
@@ -121,6 +125,19 @@ public class Side extends JPanel {
     }
 
     public void showEmprunt(Emprunt emprunt) {
+
+        setTitle("Emprunt n°" + emprunt.getId());
+
+        SideLabel debut = new SideLabel("<html>Début :<br>" + emprunt.getDebut() + "</html>", this, 50, 150);
+        SideLabel fin = new SideLabel("<html>Fin :<br>" + emprunt.getFin() + "</html>", this, 50, 210);
+        SideLabel materiel = new SideLabel("Matériel : " + emprunt.getMateriel().getModele(), this, 50, 270);
+        SideLabel emprunteur = new SideLabel("<html>Emprunteur : <br>" + emprunt.getEmprunteur().getPrenom() + " " + emprunt.getEmprunteur().getNom(), this, 50, 300);
+        String statuts = emprunt.isRendu() ? "Rendu" : "Non rendu";
+        SideLabel statut = new SideLabel("Statut : " + statuts, this, 50, 360);
+        SideLabel raison = new SideLabel("Raison : " + emprunt.getRaison(), this, 50, 390);
+
+        addButtons(emprunt);
+
     }
 
     public void showBatiment(Batiment batiment) {
@@ -132,6 +149,12 @@ public class Side extends JPanel {
         SideLabel adresse = new SideLabel("Adresse : " + batiment.getAdresse(), this, 50, 250);
         SideLabel respo = new SideLabel("Responsable : " + batiment.getResponsable().getPrenom() + " " + batiment.getResponsable().getNom(), this, 50, 300);
         
+        SideButton salle = new SideButton(batiment, interf.menu.salles, this, 215, 600);
+        SideButton armoire = new SideButton(batiment, interf.menu.armoires, this, 25, 600);
+        SideButton materiel = new SideButton(batiment, interf.menu.materiels, this, 215, 520);
+
+        addButtons(batiment);
+
     }
 
     public void showSalle(Salle salle) {
@@ -143,6 +166,11 @@ public class Side extends JPanel {
         SideLabel etage = new SideLabel("Etage : " + salle.getEtage(), this, 50, 250);
         SideLabel surface = new SideLabel("Surface : " + salle.getSurface(), this, 50, 300);
         
+        SideButton armoire = new SideButton(salle, interf.menu.armoires, this, 25, 600);
+        SideButton materiel = new SideButton(salle, interf.menu.materiels, this, 215, 600);
+
+        addButtons(salle);
+
     }
 
     public void showArmoire(Armoire armoire) {
@@ -150,7 +178,12 @@ public class Side extends JPanel {
         setTitle(armoire.getNom());
 
         SideLabel idl = new SideLabel("ID : " + armoire.getId(), this, 50, 150);
-        SideLabel batiment = new SideLabel("Salle : " + armoire.getLocalisation().getNom(), this, 50, 200);
+        SideLabel salle = new SideLabel("Salle : " + armoire.getLocalisation().getNom(), this, 50, 200);
+        SideLabel bat = new SideLabel("Batiment : " + armoire.getLocalisation().getLocalisation().getNom(), this, 50, 250);
+
+        SideButton materiel = new SideButton(armoire, interf.menu.materiels, this, 215, 600);
+
+        addButtons(armoire);
 
     }
 

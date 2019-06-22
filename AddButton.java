@@ -1,5 +1,6 @@
 import java.awt.Color;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class AddButton extends JPanel {
@@ -9,8 +10,18 @@ public class AddButton extends JPanel {
 
         this.center=center;
         this.setSize(40,40);
-        this.setLocation(550,10);
-        this.setBackground(Color.GREEN);
+        this.setLocation(540,18);
+        this.setBackground(center.interf.blue);
+        this.setLayout(null);
+        ImageIcon image=null;
+        try { 
+            image = new ImageIcon(ImageIO.read(getClass().getResource("add-icon.png")));
+        } catch (Exception e) {}
+        JLabel img = new JLabel();
+        img.setIcon(image);
+        img.setSize(40,40);
+        img.setLocation(0,0);
+        this.add(img);
         
     }
 

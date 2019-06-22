@@ -21,6 +21,7 @@ public class Interface {
 
     public Font titleFont = new Font("Verdana", Font.BOLD, 50);
     public Font sideTitleFont = new Font("Verdana", Font.BOLD, 35);
+    public Font topbarFont = new Font("Verdana", Font.BOLD, 28);
     public Font menuFont = new Font("Verdana", Font.PLAIN, 25);
     public Font headerFont = new Font("Verdana", Font.BOLD, 15);
     public Font tableFont = new Font("Verdana", Font.PLAIN, 15);

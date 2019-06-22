@@ -7,12 +7,21 @@ public class Emprunt extends A38Object {
     private Date fin;
     private String raison;
     private boolean rendu;
-    private Personne emprunteur;
-    private ArrayList<Materiel> materiel;
+    private Individu emprunteur;
+    private Materiel materiel;
 
-    public Emprunt(Personne p) {
+    public Emprunt(Individu p) {
         this.emprunteur=p;
+    }
 
+    public Emprunt(int id, Date debut, Date fin, String raison, boolean rendu, Individu emprunteur, Materiel materiel) {
+        this.debut=debut;
+        this.fin=fin;
+        this.raison=raison;
+        this.rendu=rendu;
+        this.emprunteur=emprunteur;
+        this.materiel=materiel;
+        this.id=id;
     }
 
     public Date getDebut() {
@@ -47,19 +56,19 @@ public class Emprunt extends A38Object {
         this.rendu = rendu;
     }
 
-    public Personne getEmprunteur() {
+    public Individu getEmprunteur() {
         return this.emprunteur;
     }
 
-    public void setEmprunteur(Personne emprunteur) {
+    public void setEmprunteur(Individu emprunteur) {
         this.emprunteur = emprunteur;
     }
 
-    public ArrayList<Materiel> getMateriel() {
+    public Materiel getMateriel() {
         return this.materiel;
     }
 
-    public void setMateriel(ArrayList<Materiel> materiel) {
+    public void setMateriel(Materiel materiel) {
         this.materiel = materiel;
     }
 

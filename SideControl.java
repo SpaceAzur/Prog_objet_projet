@@ -70,16 +70,19 @@ public class SideControl implements MouseListener {
 
         interf.showObjects(dst, src);
 
-        String beginTitle = "";
+        String beginTitle = dst + " : ";
         String endTitle = "";
 
-        if (dst.equals("Matériels"))
-            beginTitle = "Matériels de ";
-        else if (dst.equals("Personnes"))
-            beginTitle = "Personnes liées à ";
-
         if (src instanceof Institution)
-            endTitle = interf.mod.getInstitution(id).getRaisonSociale();
+            endTitle = mod.getInstitution(id).getRaisonSociale();
+        if (src instanceof Individu)
+            endTitle = mod.getIndividu(id).getPrenom() + " " + mod.getIndividu(id).getNom();
+        if (src instanceof Armoire)
+            endTitle = "Armoire " + mod.getArmoire(id).getNom();
+        if (src instanceof Batiment)
+            endTitle = "Batiment " + mod.getBatiment(id).getNom();
+        if (src instanceof Salle)
+            endTitle = "Salle " + mod.getSalle(id).getNom();
 
         interf.changeTitle(beginTitle + endTitle);
 

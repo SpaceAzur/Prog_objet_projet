@@ -12,7 +12,7 @@ public class SideButton extends JPanel {
 
         this.src=src;
         this.dst=dst;
-        this.setSize(160,80);
+        this.setSize(160,50);
         this.setLocation(x, y);
         this.setBackground(side.interf.yellow);
         this.setLayout(null);

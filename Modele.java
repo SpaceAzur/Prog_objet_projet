@@ -1,7 +1,12 @@
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,10 +29,10 @@ public class Modele {
         this.conn = conn;
         initInstitutions();
         initIndividus();
-        initMateriels();
         initBatiments();
         initSalles();
         initArmoires();
+        initMateriels();
         initEmprunts();
 
     }
@@ -111,6 +116,8 @@ public class Modele {
                 t.setPrixAchat(rs.getDouble("prixachat"));
                 t.setDateAchat(dateF.parse(rs.getString("dateachat")));
                 t.setEtat(rs.getString("etat"));
+                Armoire armoire = getArmoire(rs.getInt("armoire"));
+                t.setArmoire(armoire);
 
                 if (t instanceof Terminal) {
                     ((Terminal) t).setOS(rs.getString("OS"));
@@ -120,6 +127,8 @@ public class Modele {
                 }
 
                 materiels.put(t.getId(), t);
+                if (armoire != null)
+                    armoire.addMateriel(t);
 
             }
 
@@ -207,7 +216,7 @@ public class Modele {
 
     }
 
-    private void initEmprunts() { // TO FINISH
+    private void initEmprunts() {
 
         try {
 
@@ -218,6 +227,14 @@ public class Modele {
             while (rs.next()) {
 
                 int id = rs.getInt("numemprunt");
+                boolean rendu = rs.getBoolean("rendu");
+                Date debut = (Date) dateF.parse(rs.getString("datedebut"));
+                Date fin = (Date) dateF.parse(rs.getString("datefin"));
+                String raison = rs.getString("raison");
+                Materiel mat = getMateriel(rs.getInt("materiel"));
+                Individu emprunteur = getIndividu(rs.getInt("idemprunteur"));
+
+                emprunts.put(id, new Emprunt(id, debut, fin, raison, rendu, emprunteur, mat));
 
             }
 
@@ -226,6 +243,8 @@ public class Modele {
         }
 
     }
+
+
 
     ///// SAUVEGARDE /////
 
@@ -404,6 +423,8 @@ public class Modele {
 
     }
 
+
+
     ///// GETTERS /////
 
     /// EMPRUNTS ///
@@ -414,20 +435,12 @@ public class Modele {
             return new ArrayList<Emprunt>(emprunts.values());
 
         ArrayList<Emprunt> result = new ArrayList<Emprunt>();
-        for (int i = 0; i < emprunts.size(); i++) {
-            if (filter instanceof Individu && emprunts.get(i).getEmprunteur() == filter) {
-                result.add(emprunts.get(i));
-            }
-        }
-        return result;
-    }
 
-    public ArrayList<Emprunt> getEmprunts(boolean isRendu) {
-        ArrayList<Emprunt> result = new ArrayList<Emprunt>();
-        for (int i = 0; i < emprunts.size(); i++) {
-            if (emprunts.get(i).isRendu() == isRendu) {
-                result.add(emprunts.get(i));
-            }
+        for (Emprunt emp : emprunts.values()) {
+            if (filter instanceof Individu && emp.getEmprunteur() == filter)
+                result.add(emp);
+            if (filter instanceof Institution && emp.getMateriel().getProprietaire() == filter)
+                result.add(emp);
         }
         return result;
     }
@@ -446,7 +459,13 @@ public class Modele {
         ArrayList<Materiel> result = new ArrayList<Materiel>();
 
         for (Materiel mat : materiels.values()) {
-            if (filter instanceof Institution && mat.getProprietaire().getId() == filter.getId())
+            if (filter instanceof Institution && mat.getProprietaire() == filter)
+                result.add(mat);
+            if (filter instanceof Armoire && mat.getArmoire() == filter)
+                result.add(mat);
+            if (filter instanceof Batiment && mat.getArmoire().getLocalisation().getLocalisation() == filter)
+                result.add(mat);
+            if (filter instanceof Salle && mat.getArmoire().getLocalisation() == filter)
                 result.add(mat);
         }
 
@@ -455,23 +474,6 @@ public class Modele {
 
     public Materiel getMateriel(int id) {
         return materiels.get(id);
-    }
-
-    public void deleteMateriel(Materiel mat) {
-
-        PreparedStatement ps = null;
-        try {
-            if (mat instanceof Terminal)
-                ps = conn.prepareStatement("DELETE FROM terminaux WHERE id=?");
-            else if (mat instanceof Peripherique)
-                ps = conn.prepareStatement("DELETE FROM peripheriques WHERE id=?");
-            ps.setInt(1, mat.getId());
-            ps.executeQuery();
-            materiels.remove(mat.getId());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 
     /// INDIVIDUS ///
@@ -484,7 +486,7 @@ public class Modele {
         ArrayList<Individu> result = new ArrayList<Individu>();
 
         for (Individu individu : individus.values()) {
-            if (filter instanceof Institution && individu.getInstitution().getId() == filter.getId())
+            if (filter instanceof Institution && individu.getInstitution() == filter)
                 result.add(individu);
         }
 
@@ -503,7 +505,16 @@ public class Modele {
         if (filter == null)
             return new ArrayList<Batiment>(batiments.values());
 
-        return null;
+        ArrayList<Batiment> result = new ArrayList<>();
+
+        for (Batiment batiment : batiments.values()) {
+            if (filter instanceof Institution && batiment.getProprietaire() == filter)
+                result.add(batiment);
+            if (filter instanceof Individu && batiment.getResponsable() == filter)
+                result.add(batiment);
+        }
+
+        return result;
 
     }
 
@@ -518,7 +529,16 @@ public class Modele {
         if (filter == null)
             return new ArrayList<Salle>(salles.values());
 
-        return null;
+        ArrayList<Salle> result = new ArrayList<>();
+
+        for (Salle salle : salles.values()) {
+            if (filter instanceof Institution && salle.getLocalisation().getProprietaire() == filter)
+                result.add(salle);
+            if (filter instanceof Batiment && salle.getLocalisation() == filter)
+                result.add(salle);
+        }
+
+        return result;
 
     }
 
@@ -533,7 +553,17 @@ public class Modele {
         if (filter == null)
             return new ArrayList<Armoire>(armoires.values());
 
-        return null;
+        ArrayList<Armoire> result = new ArrayList<>();
+
+        for (Armoire armoire : armoires.values()) {
+            if (filter instanceof Institution
+                    && armoire.getLocalisation().getLocalisation().getProprietaire() == filter)
+                result.add(armoire);
+            if (filter instanceof Batiment && armoire.getLocalisation().getLocalisation() == filter)
+                result.add(armoire);
+        }
+
+        return result;
 
     }
 
@@ -561,6 +591,39 @@ public class Modele {
 
     }
 
+
+
+    ///// SUPPRESSION /////
+
+    public void deleteObject(A38Object obj) {
+
+        if (obj instanceof Individu)
+            deleteIndividu((Individu) obj);
+        if (obj instanceof Institution)
+            deleteInstitution((Institution) obj);
+        if (obj instanceof Materiel)
+            deleteMateriel((Materiel) obj);
+        if (obj instanceof Emprunt)
+            deleteEmprunt((Emprunt) obj);
+        if (obj instanceof Batiment)
+            deleteBatiment((Batiment) obj);
+        if (obj instanceof Salle)
+            deleteSalle((Salle) obj);
+        if (obj instanceof Armoire)
+            deleteArmoire((Armoire) obj);
+
+    }
+
+    public void deleteIndividu(Individu indiv) {}
+
+    public void deleteEmprunt(Emprunt emp) {}
+
+    public void deleteBatiment(Batiment bat) {}
+
+    public void deleteSalle(Salle salle) {}
+
+    public void deleteArmoire(Armoire armoire) {}
+
     public void deleteInstitution(Institution per) {
 
         PreparedStatement ps = null;
@@ -569,6 +632,20 @@ public class Modele {
             ps.setInt(1, per.getId());
             ps.executeUpdate();
             institutions.remove(per.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void deleteMateriel(Materiel mat) {
+
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement("DELETE FROM materiels WHERE id=?");
+            ps.setInt(1, mat.getId());
+            ps.executeQuery();
+            materiels.remove(mat.getId());
         } catch (Exception e) {
             e.printStackTrace();
         }

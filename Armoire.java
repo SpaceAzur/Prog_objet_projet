@@ -29,6 +29,10 @@ public class Armoire extends A38Object {
         this.materiels = materiels;
     }
 
+    public void addMateriel(Materiel m) {
+        this.materiels.add(m);
+    }
+
     public Salle getLocalisation() {
         return this.localisation;
     }

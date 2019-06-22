@@ -10,6 +10,7 @@ public class Materiel extends A38Object {
     protected Date dateAchat;
     protected String etat;
     protected String[] connectique;
+    protected Armoire armoire;
 
     public void setAll(Institution proprio, String modele, String nature, String marque, double prixAchat,
             Date dateAchat, String etat) {
@@ -30,6 +31,14 @@ public class Materiel extends A38Object {
 
     public void setProprietaire(Institution proprietaire) {
         this.proprietaire = proprietaire;
+    }
+
+    public void setArmoire(Armoire armoire) {
+        this.armoire=armoire;
+    }
+
+    public Armoire getArmoire() {
+        return this.armoire;
     }
 
     public String getModele() {

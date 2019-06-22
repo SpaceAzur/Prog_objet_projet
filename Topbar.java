@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Dimension;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -22,9 +23,10 @@ public class Topbar extends JPanel {
         setBorder(BorderFactory.createMatteBorder(0, 2, 2, 2, interf.yellow));
 
         title = new JLabel();
-        title.setFont(interf.sideTitleFont);
+        title.setMaximumSize(new Dimension(interf.CENTER, interf.TOPBAR));
+        title.setFont(interf.topbarFont);
         title.setForeground(Color.WHITE);
-        title.setLocation(30, 15);
+        title.setLocation(30, 20);
         add(title);
 
         AddButton ajout = new AddButton(interf.center);
