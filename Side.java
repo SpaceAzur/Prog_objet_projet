@@ -14,6 +14,7 @@ public class Side extends JPanel {
     Interface interf;
     SideControl sctrl;
     ArrayList<JComponent> fields;
+    JLabel title;
 
     public Side(Interface interf) {
 
@@ -42,11 +43,11 @@ public class Side extends JPanel {
 
     private void setTitle(String s) {
 
-        JLabel title = new JLabel(s);
+        title = new JLabel(s);
         title.setFont(interf.sideTitleFont);
         title.setForeground(Color.WHITE);
         title.setSize(title.getPreferredSize());
-        title.setLocation(interf.SIDE / 2 - title.getWidth() / 2, 35);
+        title.setLocation(interf.SIDE / 2 - title.getWidth() / 2, 65);
         add(title);
 
     }
@@ -107,6 +108,13 @@ public class Side extends JPanel {
         SideLabel date = new SideLabel("<html>Date d'achat : <br>" + mat.getDateAchat() + "</html>", this, 50, 270);
         SideLabel etat = new SideLabel("Etat : " + mat.getEtat(), this, 50, 330);
         SideLabel connec = new SideLabel("Connectique : " + mat.getConnectique(), this, 50, 360);
+        if (mat instanceof Terminal) {
+            Terminal ter = (Terminal) mat;
+            SideLabel os = new SideLabel("OS : " + ter.getOS() , this, 50, 390);
+            SideLabel taille = new SideLabel("Ecran(\") : " + ter.getTailleEcran(), this, 50, 420);
+            SideLabel reso = new SideLabel("Resolution : " + ter.getXResolution() + "*" + ter.getYResolution(), this, 50, 450);
+
+        }
 
         addButtons(mat);
 
@@ -116,12 +124,34 @@ public class Side extends JPanel {
     }
 
     public void showBatiment(Batiment batiment) {
+
+        setTitle(batiment.getNom());
+
+        SideLabel idl = new SideLabel("ID : " + batiment.getId(), this, 50, 150);
+        SideLabel proprio = new SideLabel("Propriétaire : " + batiment.getProprietaire().getRaisonSociale(), this, 50, 200);
+        SideLabel adresse = new SideLabel("Adresse : " + batiment.getAdresse(), this, 50, 250);
+        SideLabel respo = new SideLabel("Responsable : " + batiment.getResponsable().getPrenom() + " " + batiment.getResponsable().getNom(), this, 50, 300);
+        
     }
 
     public void showSalle(Salle salle) {
+
+        setTitle(salle.getNom());
+
+        SideLabel idl = new SideLabel("ID : " + salle.getId(), this, 50, 150);
+        SideLabel batiment = new SideLabel("Batiment : " + salle.getLocalisation().getNom(), this, 50, 200);
+        SideLabel etage = new SideLabel("Etage : " + salle.getEtage(), this, 50, 250);
+        SideLabel surface = new SideLabel("Surface : " + salle.getSurface(), this, 50, 300);
+        
     }
 
     public void showArmoire(Armoire armoire) {
+
+        setTitle(armoire.getNom());
+
+        SideLabel idl = new SideLabel("ID : " + armoire.getId(), this, 50, 150);
+        SideLabel batiment = new SideLabel("Salle : " + armoire.getLocalisation().getNom(), this, 50, 200);
+
     }
 
     public void editIndividu(Individu individu) {
@@ -140,10 +170,10 @@ public class Side extends JPanel {
         SideTextField field;
         if (little) {
             field = new SideTextField(k, v, this, 200, y - 7);
-            field.setSize(150, 35);
+            field.setSize(150, 30);
         } else {
             field = new SideTextField(k, v, this, 150, y - 7);
-            field.setSize(200, 35);
+            field.setSize(200, 30);
         }
         fields.add(field);
     }
@@ -153,10 +183,10 @@ public class Side extends JPanel {
         SideComboBox combo = new SideComboBox(k, vals);
         if (little) {
             combo.setLocation(200, y - 7);
-            combo.setSize(150, 35);
+            combo.setSize(150, 30);
         } else {
             combo.setLocation(150, y - 7);
-            combo.setSize(200, 35);
+            combo.setSize(200, 30);
         }
         add(combo);
         fields.add(combo);
@@ -205,29 +235,41 @@ public class Side extends JPanel {
     public void newMateriel(A38Object filter) {
 
         setTitle("Nouveau matériel");
+        title.setLocation((int) title.getLocation().getX(), 15);
 
         fields.clear();
-        
+
         ArrayList<Institution> institutions = new ArrayList<Institution>(interf.mod.getInstitutions().values());
-        String[] proprietaires=new String[institutions.size()];
-        for (int i=0 ; i<institutions.size() ; i++) {
-            proprietaires[i]=institutions.get(i).getRaisonSociale();
+        String[] proprietaires = new String[institutions.size()];
+        for (int i = 0; i < institutions.size(); i++) {
+            proprietaires[i] = institutions.get(i).getRaisonSociale();
         }
 
-        createFieldLateral("Nature", "", 120, false);
-        createFieldLateral("Modèle", "", 180, false);
-        createFieldLateral("Marque", "", 240, false);
-        createDropdownLateral("Type", new String[] { "terminaux", "peripheriques" }, 300, false);
-        createFieldLateral("Prix d'achat", "", 360, true);
-        createFieldLateral("Date d'achat", "", 420, true);
-        createFieldLateral("Etat", "", 480, false);
-        SideComboBox proprio = createDropdownLateral("Propriétaire", proprietaires, 540, true);
+        SideComboBox proprio = createDropdownLateral("Propriétaire", proprietaires, 75, true);
         if (filter instanceof Institution) {
             Institution inst = (Institution) filter;
             proprio.setSelectedItem(inst.getRaisonSociale());
         }
+        createFieldLateral("Nature", "", 115, false);
+        createFieldLateral("Modèle", "", 155, false);
+        createFieldLateral("Marque", "", 195, false);
+        SideComboBox type = createDropdownLateral("Type", new String[] { "peripheriques", "terminaux" }, 235, false);
+        type.addItemListener(new MaterielComboControl(this));
+        createFieldLateral("Prix d'achat", "", 275, true);
+        createFieldLateral("Date d'achat", "", 315, true);
+        createFieldLateral("Etat", "", 355, false);
 
         SideSaveButton save = new SideSaveButton(this, null, fields);
+
+    }
+
+    public void showTerminalOptions() {
+
+        createFieldLateral("OS", "", 395, false);
+        createFieldLateral("Taille écran", "", 435, true);
+        createFieldLateral("Résolution X", "", 475, true);
+        createFieldLateral("Résolution Y", "", 515, true);
+        repaint();
 
     }
 

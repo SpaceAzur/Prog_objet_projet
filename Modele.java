@@ -90,13 +90,19 @@ public class Modele {
 
         try {
 
-            PreparedStatement ps = conn.prepareStatement("SELECT * FROM terminaux");
+            PreparedStatement ps = conn.prepareStatement("SELECT * FROM materiels");
             ResultSet rs = ps.executeQuery();
             materiels = new HashMap<Integer, Materiel>();
 
             while (rs.next()) {
 
-                Terminal t = new Terminal();
+                String type = rs.getString("type");
+                Materiel t = null;
+
+                if (type.equals("terminaux"))
+                    t = new Terminal();
+                else
+                    t = new Peripherique();
 
                 t.setProprietaire(getInstitution(rs.getInt("proprietaire")));
                 t.setId(rs.getInt("id"));
@@ -105,30 +111,13 @@ public class Modele {
                 t.setPrixAchat(rs.getDouble("prixachat"));
                 t.setDateAchat(dateF.parse(rs.getString("dateachat")));
                 t.setEtat(rs.getString("etat"));
-                t.setOS(rs.getString("OS"));
-                t.setTailleEcran(rs.getDouble("tailleecran"));
-                t.setXResolution((int) rs.getDouble("xresolution"));
-                t.setYResolution((int) rs.getDouble("yresolution"));
 
-                materiels.put(t.getId(), t);
-
-            }
-
-            ps = conn.prepareStatement("SELECT * FROM peripheriques");
-            rs = ps.executeQuery();
-
-            while (rs.next()) {
-
-                Peripherique t = new Peripherique();
-
-                t.setProprietaire(getInstitution(rs.getInt("proprietaire")));
-                t.setId(rs.getInt("id"));
-                t.setModele(rs.getString("modele"));
-                t.setMarque(rs.getString("marque"));
-                t.setPrixAchat(rs.getDouble("prixachat"));
-                t.setDateAchat(dateF.parse(rs.getString("dateachat")));
-                t.setEtat(rs.getString("etat"));
-                t.setNature(rs.getString("nature"));
+                if (t instanceof Terminal) {
+                    ((Terminal) t).setOS(rs.getString("OS"));
+                    ((Terminal) t).setTailleEcran(rs.getDouble("tailleecran"));
+                    ((Terminal) t).setXResolution((int) rs.getDouble("xresolution"));
+                    ((Terminal) t).setYResolution((int) rs.getDouble("yresolution"));
+                }
 
                 materiels.put(t.getId(), t);
 
@@ -228,12 +217,7 @@ public class Modele {
 
             while (rs.next()) {
 
-                int id = rs.getInt("id");
-                Salle salle = getSalle(rs.getInt("salle"));
-                String nom = rs.getString("nom");
-                Armoire armoire = new Armoire(id, nom, salle);
-                armoires.put(id, armoire);
-                salle.addArmoire(armoire);
+                int id = rs.getInt("numemprunt");
 
             }
 
@@ -329,18 +313,23 @@ public class Modele {
         String date = values.get("Date d'achat");
         String etat = values.get("Etat");
         String type = values.get("Type");
+        String os = values.get("OS");
+        String taille = values.get("Taille écran");
+        String xres = values.get("Résolution X");
+        String yres = values.get("Résolution Y");
 
         PreparedStatement ps;
 
         Materiel mat = null;
 
         if (obj != null) {
-            ps = conn.prepareStatement("UPDATE " + type
-                    + " SET proprietaire=?, nature=?, modele=?, marque=?, prixachat=?, dateachat=?, etat=? WHERE id=?");
-        } else
-            ps = conn.prepareStatement("INSERT INTO " + type
-                    + "(proprietaire, nature, modele, marque, prixachat, dateachat, etat) VALUES(?,?,?,?,?,?,?)",
+            ps = conn.prepareStatement(
+                    "UPDATE materiels SET proprietaire=?, nature=?, modele=?, marque=?, prixachat=?, dateachat=?, etat=?, type=?, OS=?, tailleecran=?, xresolution=?, yresolution=? WHERE id=?");
+        } else {
+            ps = conn.prepareStatement(
+                    "INSERT INTO materiels(proprietaire, nature, modele, marque, prixachat, dateachat, etat, type, OS, tailleecran, xresolution, yresolution) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS);
+        }
 
         ps.setInt(1, idProprio);
         ps.setString(2, modele);
@@ -349,30 +338,48 @@ public class Modele {
         ps.setDouble(5, prix);
         ps.setString(6, date);
         ps.setString(7, etat);
+        ps.setString(8, type);
+        ps.setString(9, os);
+        ps.setString(10, taille);
+        ps.setString(11, xres);
+        ps.setString(12, yres);
         if (obj != null)
-            ps.setInt(8, obj.getId());
+            ps.setInt(13, obj.getId());
 
         int affectedRows = ps.executeUpdate();
 
         if (affectedRows == 0)
             throw new SQLException("Creation/update failed, no rows affected.");
 
-        if (obj != null)
+        if (obj != null) {
             obj.setAll(getInstitution(idProprio), modele, nature, marque, prix, dateF.parse(date), etat);
-        
+            if (obj instanceof Terminal) {
+                ((Terminal) obj).setOS(os);
+                ((Terminal) obj).setTailleEcran(Double.valueOf(taille));
+                ((Terminal) obj).setXResolution(Integer.valueOf(xres));
+                ((Terminal) obj).setYResolution(Integer.valueOf(yres));
+            }
+        }
+
         else {
             try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     int id = generatedKeys.getInt(1);
-                    if (type.equals("terminaux")) mat = new Terminal();
-                    else if (type.equals("peripheriques")) mat = new Terminal();
+                    if (type.equals("terminaux")) {
+                        mat = new Terminal();
+                        ((Terminal) mat).setOS(os);
+                        ((Terminal) mat).setTailleEcran(Double.valueOf(taille));
+                        ((Terminal) mat).setXResolution(Integer.valueOf(xres));
+                        ((Terminal) mat).setYResolution(Integer.valueOf(yres));
+                    } else if (type.equals("peripheriques"))
+                        mat = new Peripherique();
                     mat.setId(id);
                     mat.setAll(getInstitution(idProprio), modele, nature, marque, prix, dateF.parse(date), etat);
+
                     materiels.put(id, mat);
                 }
             }
 
-            
         }
 
     }

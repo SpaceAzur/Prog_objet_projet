@@ -1,6 +1,7 @@
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.SQLException;
+import java.text.ParseException;
 
 public class SideControl implements MouseListener {
 
@@ -51,8 +52,10 @@ public class SideControl implements MouseListener {
                 obj = mod.save(bouton.getObj(), bouton.getValues(), bouton.getType());
                 interf.showObject(obj);
                 interf.refreshObjects();
-            } catch (Exception se) {
+            } catch (SQLException se) {
                 interf.showError(se.getMessage());
+            } catch (ParseException pse) {
+                interf.showError(pse.getMessage());
             }
 
         }
