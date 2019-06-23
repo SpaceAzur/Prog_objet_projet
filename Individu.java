@@ -18,6 +18,16 @@ public class Individu extends Personne {
         this.institution=institution;
     }
 
+    public void setAll(String prenom, String nom, String status, String adresse, String telephone, String email, Institution institution) {
+        this.prenom=prenom;
+        this.nom=nom;
+        this.status=status;
+        this.adresse=adresse;
+        this.telephone=telephone;
+        this.email=email;
+        this.institution=institution;
+    }
+
     public String getPrenom() {
         return prenom;
     }

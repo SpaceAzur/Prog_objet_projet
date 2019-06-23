@@ -28,10 +28,15 @@ public class SideControl implements MouseListener {
         if (e.getSource() instanceof DeleteButton) {
 
             DeleteButton bouton = (DeleteButton) e.getSource();
-            mod.deleteObject(bouton.getItem());
-            interf.side.removeAll();
-            interf.side.repaint();
-            interf.refreshObjects();
+            try {
+                mod.deleteObject(bouton.getItem());
+                interf.side.removeAll();
+                interf.showMessage("Objet supprimé !");
+                interf.side.repaint();
+                interf.refreshObjects();
+            } catch (SQLException se) {
+                interf.showError(se.getMessage());
+            }
 
         }
 
@@ -54,8 +59,6 @@ public class SideControl implements MouseListener {
                 interf.showError(se.getMessage());
             } catch (ParseException pse) {
                 interf.showError(pse.getMessage());
-            } catch (Exception ex) {
-                interf.showError(ex.getMessage());
             }
 
         }

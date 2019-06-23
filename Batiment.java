@@ -19,6 +19,15 @@ public class Batiment extends A38Object {
 
     }
 
+    public void setAll(String adresse, String nom, Institution proprietaire, Individu responsable) {
+
+        this.adresse=adresse;
+        this.nom=nom;
+        this.proprietaire=proprietaire;
+        this.responsable=responsable;
+
+    }
+
     public void addSalle(Salle salle) {
         salles.add(salle);
     }
@@ -37,6 +46,10 @@ public class Batiment extends A38Object {
 
     public void setSalles(ArrayList<Salle> salles) {
         this.salles = salles;
+    }
+
+    public void removeSalle(Salle salle) {
+        this.salles.remove(salle);
     }
 
     public String getNom() {

@@ -33,6 +33,10 @@ public class Armoire extends A38Object {
         this.materiels.add(m);
     }
 
+    public void removeMateriel(Materiel m) {
+        this.materiels.remove(m);
+    }
+
     public Salle getLocalisation() {
         return this.localisation;
     }

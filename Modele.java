@@ -57,8 +57,9 @@ public class Modele {
                 institutions.put(id, new Institution(id, adresse, telephone, email, raison));
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            System.exit(1);
         }
 
     }
@@ -85,8 +86,9 @@ public class Modele {
                         institutions.get(idInstitution)));
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            System.exit(1);
         }
 
     }
@@ -133,8 +135,11 @@ public class Modele {
 
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            System.exit(1);
+        } catch (ParseException pe) {
+            System.out.println(pe.getMessage());
         }
 
     }
@@ -159,8 +164,9 @@ public class Modele {
 
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            System.exit(1);
         }
 
     }
@@ -186,8 +192,9 @@ public class Modele {
 
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            System.exit(1);
         }
 
     }
@@ -211,8 +218,9 @@ public class Modele {
 
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            System.exit(1);
         }
 
     }
@@ -239,32 +247,35 @@ public class Modele {
 
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            System.exit(1);
+        } catch (ParseException pe) {
+            System.out.println(pe.getMessage());
         }
 
     }
 
     ///// SAUVEGARDE /////
 
-    public A38Object save(A38Object obj, Map<String, String> values, String type) throws SQLException, ParseException, Exception {
+    public A38Object save(A38Object obj, Map<String, String> values, String type) throws SQLException, ParseException {
 
         A38Object result = null;
 
         if (obj instanceof Institution || type.equals("Institutions"))
             result = saveInstitution((Institution) obj, values);
         if (obj instanceof Materiel || type.equals("Matériels"))
-            saveMateriel((Materiel) obj, values);
+            result = saveMateriel((Materiel) obj, values);
         if (obj instanceof Batiment || type.equals("Bâtiments"))
-            saveBatiment((Batiment) obj, values);
+            result = saveBatiment((Batiment) obj, values);
         if (obj instanceof Emprunt || type.equals("Emprunts"))
-            saveEmprunt((Emprunt) obj, values);
+            result = saveEmprunt((Emprunt) obj, values);
         if (obj instanceof Salle || type.equals("Salles"))
-            saveSalle((Salle) obj, values);
+            result = saveSalle((Salle) obj, values);
         if (obj instanceof Individu || type.equals("Personnes"))
-            saveIndividu((Individu) obj, values);
+            result = saveIndividu((Individu) obj, values);
         if (obj instanceof Armoire || type.equals("Armoires"))
-            saveArmoire((Armoire) obj, values);
+            result = saveArmoire((Armoire) obj, values);
 
         return result;
 
@@ -312,7 +323,7 @@ public class Modele {
                     institutions.put(id, new Institution(id, ad, tel, email, rs));
                     inst = institutions.get(id);
                 } else {
-                    throw new SQLException("Creating user failed, no ID obtained.");
+                    throw new SQLException("Creating object failed, no ID obtained.");
                 }
             }
         }
@@ -321,7 +332,7 @@ public class Modele {
 
     }
 
-    public void saveMateriel(Materiel obj, Map<String, String> values) throws SQLException, ParseException {
+    public Materiel saveMateriel(Materiel obj, Map<String, String> values) throws SQLException, ParseException {
 
         int idProprio = getInstitution(values.get("Propriétaire")).getId();
         String modele = values.get("Modèle");
@@ -341,6 +352,7 @@ public class Modele {
         Materiel mat = null;
 
         if (obj != null) {
+            mat=obj;
             type = obj instanceof Terminal ? new String("terminaux") : new String("peripheriques");
             ps = conn.prepareStatement(
                     "UPDATE materiels SET proprietaire=?, nature=?, modele=?, marque=?, prixachat=?, dateachat=?, etat=?, type=?, OS=?, tailleecran=?, xresolution=?, yresolution=? WHERE id=?");
@@ -396,30 +408,141 @@ public class Modele {
                     mat.setAll(getInstitution(idProprio), modele, nature, marque, prix, dateF.parse(date), etat);
 
                     materiels.put(id, mat);
+                } else {
+                    throw new SQLException("Creating object failed, no ID obtained.");
                 }
             }
 
         }
 
-    }
-
-    public void saveBatiment(Batiment obj, Map<String, String> values) {
+        return mat;
 
     }
 
-    public void saveArmoire(Armoire obj, Map<String, String> values) {
+    public Batiment saveBatiment(Batiment obj, Map<String, String> values) throws SQLException {
+
+        String ad = values.get("Adresse");
+        String nom = values.get("Nom");
+        int respo = getIndividu(values.get("Responsable")).getId();
+        int inst = getInstitution(values.get("Propriétaire")).getId();
+
+        PreparedStatement ps;
+
+        Batiment bat = null;
+
+        if (obj != null) {
+            ps = conn.prepareStatement(
+                    "UPDATE batiments SET nombatiment=?, adresse=?, institution=?, responsable=? WHERE id=?");
+            bat = obj;
+        } else
+            ps = conn.prepareStatement(
+                    "INSERT INTO batiments(nombatiment, adresse, institution, responsable) VALUES(?,?,?,?)",
+                    Statement.RETURN_GENERATED_KEYS);
+
+        ps.setString(1, nom);
+        ps.setString(2, ad);
+        ps.setInt(3, inst);
+        ps.setInt(4, respo);
+
+        if (obj != null)
+            ps.setInt(5, obj.getId());
+
+        int affectedRows = ps.executeUpdate();
+
+        if (affectedRows == 0)
+            throw new SQLException("Creation/update failed, no rows affected.");
+
+        if (obj != null)
+            obj.setAll(ad, nom, getInstitution(values.get("Propriétaire")), getIndividu(values.get("Responsable")));
+
+        else {
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int id = generatedKeys.getInt(1);
+                    batiments.put(id, new Batiment(id, ad, nom, getInstitution(values.get("Propriétaire")), getIndividu(values.get("Responsable"))));
+                    bat = batiments.get(id);
+                } else {
+                    throw new SQLException("Creating object failed, no ID obtained.");
+                }
+            }
+        }
+
+        return bat;
 
     }
 
-    public void saveSalle(Salle obj, Map<String, String> values) {
+    public Armoire saveArmoire(Armoire obj, Map<String, String> values) throws SQLException {
+
+        return null;
 
     }
 
-    public void saveIndividu(Individu obj, Map<String, String> values) {
+    public Salle saveSalle(Salle obj, Map<String, String> values) throws SQLException {
+
+        return null;
 
     }
 
-    public Emprunt saveEmprunt(Emprunt obj, Map<String, String> values) throws SQLException, ParseException, Exception {
+    public Individu saveIndividu(Individu obj, Map<String, String> values) throws SQLException {
+
+        String ad = values.get("Adresse");
+        String tel = values.get("Téléphone");
+        String email = values.get("Mail");
+        String status = values.get("Status");
+        String prenom = values.get("Prénom");
+        String nom = values.get("Nom");
+        int inst = getInstitution(values.get("Institution")).getId();
+
+        PreparedStatement ps;
+
+        Individu indiv = null;
+
+        if (obj != null) {
+            ps = conn.prepareStatement(
+                    "UPDATE individus SET nom=?, prenom=?, status=?, adresse=?, telephone=?, email=?, institution=? WHERE id=?");
+            indiv = obj;
+        } else
+            ps = conn.prepareStatement(
+                    "INSERT INTO individus(nom, prenom, status, adresse, telephone, email, institution) VALUES(?,?,?,?,?,?,?)",
+                    Statement.RETURN_GENERATED_KEYS);
+
+        ps.setString(1, nom);
+        ps.setString(2, prenom);
+        ps.setString(3, status);
+        ps.setString(4, ad);
+        ps.setString(5, tel);
+        ps.setString(6, email);
+        ps.setInt(7, inst);
+
+        if (obj != null)
+            ps.setInt(8, obj.getId());
+
+        int affectedRows = ps.executeUpdate();
+
+        if (affectedRows == 0)
+            throw new SQLException("Creation/update failed, no rows affected.");
+
+        if (obj != null)
+            obj.setAll(prenom, nom, status, ad, tel, email, getInstitution(values.get("Institution")));
+
+        else {
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int id = generatedKeys.getInt(1);
+                    individus.put(id, new Individu(id, prenom, nom, status, ad, tel, email,
+                            getInstitution(values.get("Institution"))));
+                    indiv = individus.get(id);
+                } else {
+                    throw new SQLException("Creating object failed, no ID obtained.");
+                }
+            }
+        }
+
+        return indiv;
+
+    }
+
+    public Emprunt saveEmprunt(Emprunt obj, Map<String, String> values) throws SQLException, ParseException {
 
         int idEmprunteur = getIndividu(values.get("Emprunteur")).getId();
         int idMateriel = Integer.valueOf(values.get("Materiel").split("[\\(\\)]")[1]);
@@ -429,7 +552,7 @@ public class Modele {
         boolean rendu = values.get("Rendu").equals("Oui");
 
         if (dateF.parse(debut).after(dateF.parse(fin))) {
-            throw new Exception("Date de début incohérente");
+            throw new SQLException("Date constraint not respected : beginning must precede end date");
         }
 
         PreparedStatement ps;
@@ -451,7 +574,7 @@ public class Modele {
         ps.setBoolean(4, rendu);
         ps.setInt(5, idEmprunteur);
         ps.setInt(6, idMateriel);
-    
+
         if (obj != null)
             ps.setInt(7, obj.getId());
 
@@ -461,16 +584,18 @@ public class Modele {
             throw new SQLException("Creation/update failed, no rows affected.");
 
         if (obj != null)
-            emp.setAll(dateF.parse(debut), dateF.parse(fin), raison, rendu, getIndividu(idEmprunteur), getMateriel(idMateriel));
+            emp.setAll(dateF.parse(debut), dateF.parse(fin), raison, rendu, getIndividu(idEmprunteur),
+                    getMateriel(idMateriel));
 
         else {
             try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     int id = generatedKeys.getInt(1);
-                    emprunts.put(id, new Emprunt(id,dateF.parse(debut), dateF.parse(fin), raison, rendu, getIndividu(idEmprunteur), getMateriel(idMateriel) ) );
+                    emprunts.put(id, new Emprunt(id, dateF.parse(debut), dateF.parse(fin), raison, rendu,
+                            getIndividu(idEmprunteur), getMateriel(idMateriel)));
                     emp = getEmprunt(id);
                 } else {
-                    throw new SQLException("Creating user failed, no ID obtained.");
+                    throw new SQLException("Creating object failed, no ID obtained.");
                 }
             }
         }
@@ -629,6 +754,10 @@ public class Modele {
                 result.add(armoire);
             if (filter instanceof Batiment && armoire.getLocalisation().getLocalisation() == filter)
                 result.add(armoire);
+            if (filter instanceof Salle && armoire.getLocalisation() == filter)
+                result.add(armoire);
+            if (filter instanceof Materiel && armoire.getMateriels().contains(filter))
+                result.add(armoire);
         }
 
         return result;
@@ -661,7 +790,7 @@ public class Modele {
 
     ///// SUPPRESSION /////
 
-    public void deleteObject(A38Object obj) {
+    public void deleteObject(A38Object obj) throws SQLException {
 
         if (obj instanceof Individu)
             deleteIndividu((Individu) obj);
@@ -680,57 +809,113 @@ public class Modele {
 
     }
 
-    public void deleteIndividu(Individu indiv) {
-    }
+    public void deleteIndividu(Individu indiv) throws SQLException {
 
-    public void deleteEmprunt(Emprunt emp) {
+        if (getBatiments(indiv).size() != 0)
+            throw new SQLException("Cet individu est responsable d'un ou plusieurs bâtiments, corrigez cela d'abord.");
 
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement("DELETE FROM emprunts WHERE numemprunt=?");
-            ps.setInt(1, emp.getId());
-            ps.executeUpdate();
-            emprunts.remove(emp.getId());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        PreparedStatement ps = conn.prepareStatement("DELETE FROM individus WHERE id=?");
+        ps.setInt(1, indiv.getId());
+        ps.executeUpdate();
 
-    }
+        ArrayList<Emprunt> emp = getEmprunts(indiv);
 
-    public void deleteBatiment(Batiment bat) {
-    }
+        for (Emprunt emprunt : emp)
+            if (emprunt.getEmprunteur() == indiv)
+                deleteEmprunt(emprunt);
 
-    public void deleteSalle(Salle salle) {
-    }
-
-    public void deleteArmoire(Armoire armoire) {
-    }
-
-    public void deleteInstitution(Institution per) {
-
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement("DELETE FROM personnesmorales WHERE id=?");
-            ps.setInt(1, per.getId());
-            ps.executeUpdate();
-            institutions.remove(per.getId());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        individus.remove(indiv.getId());
 
     }
 
-    public void deleteMateriel(Materiel mat) {
+    public void deleteEmprunt(Emprunt emp) throws SQLException {
 
-        PreparedStatement ps = null;
-        try {
-            ps = conn.prepareStatement("DELETE FROM materiels WHERE id=?");
-            ps.setInt(1, mat.getId());
-            ps.executeQuery();
-            materiels.remove(mat.getId());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        PreparedStatement ps = conn.prepareStatement("DELETE FROM emprunts WHERE numemprunt=?");
+        ps.setInt(1, emp.getId());
+        ps.executeUpdate();
+        emprunts.remove(emp.getId());
+
+    }
+
+    public void deleteBatiment(Batiment bat) throws SQLException {
+
+        if (getSalles(bat).size() != 0)
+            throw new SQLException("Supprimez d'abord les salles de ce bâtiment");
+
+        PreparedStatement ps = conn.prepareStatement("DELETE FROM batiments WHERE id=?");
+        ps.setInt(1, bat.getId());
+        ps.executeUpdate();
+
+        batiments.remove(bat.getId());
+
+    }
+
+    public void deleteSalle(Salle salle) throws SQLException {
+
+        if (getArmoires(salle).size() != 0)
+            throw new SQLException("Des armoires sont présentes dans cette salle");
+
+        PreparedStatement ps = conn.prepareStatement("DELETE FROM salles WHERE id=?");
+        ps.setInt(1, salle.getId());
+        ps.executeUpdate();
+
+        salle.getLocalisation().removeSalle(salle);
+        salles.remove(salle.getId());
+
+    }
+
+    public void deleteArmoire(Armoire armoire) throws SQLException {
+
+        if (getMateriels(armoire).size() != 0)
+            throw new SQLException("Des matériels sont contenus dans cette armoire");
+
+        PreparedStatement ps = conn.prepareStatement("DELETE FROM armoires WHERE id=?");
+        ps.setInt(1, armoire.getId());
+        ps.executeUpdate();
+
+        armoire.getLocalisation().removeArmoire(armoire);
+        armoires.remove(armoire.getId());
+
+    }
+
+    public void deleteInstitution(Institution per) throws SQLException {
+
+        if (getEmprunts(per).size() != 0)
+            throw new SQLException("Des emprunts sont liés à cette institution");
+        if (getMateriels(per).size() != 0)
+            throw new SQLException("Des matériels sont liés à cette institution");
+        if (getBatiments(per).size() != 0)
+            throw new SQLException("Des bâtiments sont liés à cette institution");
+        if (getIndividus(per).size() != 0)
+            throw new SQLException("Des individus sont liés à cette institution");
+        if (getSalles(per).size() != 0)
+            throw new SQLException("Des salles sont liés à cette institution");
+        if (getArmoires(per).size() != 0)
+            throw new SQLException("Des armoires sont liés à cette institution");
+
+        PreparedStatement ps = conn.prepareStatement("DELETE FROM institutions WHERE id=?");
+        ps.setInt(1, per.getId());
+        ps.executeUpdate();
+        institutions.remove(per.getId());
+
+    }
+
+    public void deleteMateriel(Materiel mat) throws SQLException {
+
+        PreparedStatement ps = conn.prepareStatement("DELETE FROM materiels WHERE id=?");
+        ps.setInt(1, mat.getId());
+        ps.executeUpdate();
+
+        if (mat.getArmoire() != null)
+            mat.getArmoire().removeMateriel(mat);
+
+        ArrayList<Emprunt> emp = getEmprunts(mat);
+
+        for (Emprunt emprunt : emp)
+            if (emprunt.getMateriel() == mat)
+                deleteEmprunt(emprunt);
+
+        materiels.remove(mat.getId());
 
     }
 

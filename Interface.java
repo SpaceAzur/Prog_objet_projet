@@ -68,7 +68,6 @@ public class Interface {
 
     public void showObject(A38Object obj) {
 
-        System.out.println("plouf");
         side.removeAll();
         if (obj instanceof Individu)
             side.showIndividu((Individu) obj);
@@ -145,6 +144,10 @@ public class Interface {
 
     public void showError(String e) {
         side.showError(e);
+    }
+
+    public void showMessage(String m) {
+        side.setTitle(m);
     }
 
     public void editItem(A38Object obj) {

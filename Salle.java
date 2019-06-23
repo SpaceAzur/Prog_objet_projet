@@ -54,6 +54,10 @@ public class Salle extends A38Object {
         this.armoires = armoires;
     }
 
+    public void removeArmoire(Armoire arm) {
+        this.armoires.remove(arm);
+    }
+
     public Batiment getLocalisation() {
         return this.localisation;
     }

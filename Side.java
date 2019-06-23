@@ -7,7 +7,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import javax.swing.BorderFactory;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -45,7 +44,7 @@ public class Side extends JPanel {
         add(delete);
     }
 
-    private void setTitle(String s) {
+    public void setTitle(String s) {
 
         title = new JLabel(s);
         title.setFont(interf.sideTitleFont);
@@ -119,7 +118,7 @@ public class Side extends JPanel {
         SideLabel date = new SideLabel("<html>Date d'achat : <br>" + dateF.format(mat.getDateAchat()) + "</html>", this,
                 50, 270);
         SideLabel etat = new SideLabel("Etat : " + mat.getEtat(), this, 50, 330);
-        SideLabel connec = new SideLabel("Connectique : " + mat.getConnectique(), this, 50, 360);
+        SideLabel nature = new SideLabel("Nature : " + mat.getNature(), this, 50, 360);
         if (mat instanceof Terminal) {
             Terminal ter = (Terminal) mat;
             SideLabel os = new SideLabel("OS : " + ter.getOS(), this, 50, 390);
@@ -127,8 +126,10 @@ public class Side extends JPanel {
             SideLabel reso = new SideLabel("Resolution : " + ter.getXResolution() + "*" + ter.getYResolution(), this,
                     50, 450);
         }
+        SideLabel connec = new SideLabel("Connectique : " + mat.getConnectique(), this, 50, 480);
 
         SideButton emp = new SideButton(mat, interf.menu.emprunts, this, 215, 600);
+        SideButton armoires = new SideButton(mat, interf.menu.armoires, this, 25, 600);
 
         addButtons(mat);
 
@@ -147,6 +148,9 @@ public class Side extends JPanel {
         String statuts = emprunt.isRendu() ? "Rendu" : "Non rendu";
         SideLabel statut = new SideLabel("Statut : " + statuts, this, 50, 360);
         SideLabel raison = new SideLabel("Raison : " + emprunt.getRaison(), this, 50, 390);
+
+        if (statuts.equals("Non rendu") && emprunt.getFin().before(Calendar.getInstance().getTime()))
+            fin.setForeground(Color.RED);
 
         SideButton mat = new SideButton(emprunt, interf.menu.materiels, this, 215, 600);
 
@@ -206,6 +210,29 @@ public class Side extends JPanel {
     }
 
     public void editIndividu(Individu individu) {
+
+        setTitle(individu.getPrenom() + " " + individu.getNom());
+
+        fields.clear();
+
+        createFieldLateral("Prénom", individu.getPrenom(), 175, false);
+        createFieldLateral("Nom", individu.getNom(), 225, false);
+        SideComboBox status = createDropdownLateral("Status", new String[] { "étudiant", "professeur" }, 275, true);
+        status.setSelectedItem(individu.getStatus());
+        createFieldLateral("Adresse", individu.getAdresse(), 325, false);
+        createFieldLateral("Mail", individu.getEmail(), 375, false);
+        createFieldLateral("Téléphone", individu.getTelephone(), 425, true);
+
+        ArrayList<Institution> institutions = new ArrayList<Institution>(interf.mod.getInstitutions().values());
+        String[] insts = new String[institutions.size()];
+        for (int i = 0; i < institutions.size(); i++) {
+            insts[i] = institutions.get(i).getRaisonSociale();
+        }
+        SideComboBox institution = createDropdownLateral("Institution", insts, 475, true);
+        institution.setSelectedItem(individu.getInstitution().getRaisonSociale());
+
+        SideSaveButton save = new SideSaveButton(this, null, fields);
+
     }
 
     private void createField(String k, String v, int y) {
@@ -232,6 +259,7 @@ public class Side extends JPanel {
     private SideComboBox createDropdownLateral(String k, String[] vals, int y, boolean little) {
         SideLabel label = new SideLabel(k, this, 50, y);
         SideComboBox combo = new SideComboBox(k, vals);
+        combo.setFont(interf.tableFont);
         if (little) {
             combo.setLocation(200, y - 7);
             combo.setSize(150, 30);
@@ -242,9 +270,6 @@ public class Side extends JPanel {
         add(combo);
         fields.add(combo);
         return combo;
-    }
-
-    public void editBatiment(Batiment batiment) {
     }
 
     public void editEmprunt(Emprunt emprunt) {
@@ -272,7 +297,8 @@ public class Side extends JPanel {
         }
 
         SideComboBox materiel = createDropdownLateral("Materiel", matos, 235, false);
-        materiel.setSelectedItem(emprunt.getMateriel().getMarque() + " " + emprunt.getMateriel().getModele() + " (" + emprunt.getMateriel().getId() + ")");
+        materiel.setSelectedItem(emprunt.getMateriel().getMarque() + " " + emprunt.getMateriel().getModele() + " ("
+                + emprunt.getMateriel().getId() + ")");
 
         createFieldLateral("Date de début", dateF.format(emprunt.getDebut()), 285, true);
         createFieldLateral("Date de fin", dateF.format(emprunt.getFin()), 335, true);
@@ -293,6 +319,31 @@ public class Side extends JPanel {
     }
 
     public void newIndividu(A38Object filter) {
+
+        setTitle("Nouvelle personne");
+
+        fields.clear();
+
+        createFieldLateral("Prénom", "", 175, false);
+        createFieldLateral("Nom", "", 225, false);
+        SideComboBox status = createDropdownLateral("Status", new String[] { "étudiant", "professeur" }, 275, true);
+        createFieldLateral("Adresse", "", 325, false);
+        createFieldLateral("Mail", "", 375, false);
+        createFieldLateral("Téléphone", "", 425, true);
+
+        ArrayList<Institution> institutions = new ArrayList<Institution>(interf.mod.getInstitutions().values());
+        String[] insts = new String[institutions.size()];
+        for (int i = 0; i < institutions.size(); i++) {
+            insts[i] = institutions.get(i).getRaisonSociale();
+        }
+        SideComboBox institution = createDropdownLateral("Institution", insts, 475, true);
+        if (filter instanceof Institution) {
+            Institution inst = (Institution) filter;
+            institution.setSelectedItem(inst.getRaisonSociale());
+        }
+
+        SideSaveButton save = new SideSaveButton(this, null, fields);
+
     }
 
     public void newEmprunt(A38Object filter) {
@@ -332,7 +383,7 @@ public class Side extends JPanel {
         Calendar tom = Calendar.getInstance();
         tom.setTime(today);
         tom.add(Calendar.DATE, 1);
-        Date tomorrow=tom.getTime();
+        Date tomorrow = tom.getTime();
 
         createFieldLateral("Date de début", dateF.format(today), 285, true);
         createFieldLateral("Date de fin", dateF.format(tomorrow), 335, true);
@@ -451,6 +502,70 @@ public class Side extends JPanel {
     }
 
     public void newBatiment(A38Object filter) {
+
+        setTitle("Nouveau bâtiment");
+
+        fields.clear();
+
+        createField("Nom", "", 200);
+        createField("Adresse", "", 280);
+
+        ArrayList<Institution> institutions = new ArrayList<Institution>(interf.mod.getInstitutions().values());
+        String[] proprietaires = new String[institutions.size()];
+        for (int i = 0; i < institutions.size(); i++) {
+            proprietaires[i] = institutions.get(i).getRaisonSociale();
+        }
+        SideComboBox proprio = createDropdownLateral("Propriétaire", proprietaires, 380, true);
+        if (filter instanceof Institution) {
+            Institution inst = (Institution) filter;
+            proprio.setSelectedItem(inst.getRaisonSociale());
+        }
+
+        ArrayList<Individu> individus = interf.mod.getIndividus(null);
+        String[] indivs = new String[individus.size()];
+
+        for (int i = 0; i < individus.size(); i++) {
+            indivs[i] = individus.get(i).getPrenom() + " " + individus.get(i).getNom();
+        }
+
+        SideComboBox indiv = createDropdownLateral("Responsable", indivs, 430, true);
+
+        SideSaveButton save = new SideSaveButton(this, null, fields);
+
+    }
+
+    public void editBatiment(Batiment batiment) {
+
+        setTitle(batiment.getNom());
+
+        fields.clear();
+
+        SideLabel idl = new SideLabel("ID : " + batiment.getId(), this, 50, 150);
+
+        createField("Nom", batiment.getNom(), 200);
+        createField("Adresse", batiment.getAdresse(), 280);
+
+        ArrayList<Institution> institutions = new ArrayList<Institution>(interf.mod.getInstitutions().values());
+        String[] proprietaires = new String[institutions.size()];
+        for (int i = 0; i < institutions.size(); i++) {
+            proprietaires[i] = institutions.get(i).getRaisonSociale();
+        }
+        SideComboBox proprio = createDropdownLateral("Propriétaire", proprietaires, 380, true);
+        proprio.setSelectedItem(batiment.getProprietaire().getRaisonSociale());
+
+        ArrayList<Individu> individus = interf.mod.getIndividus(null);
+        String[] indivs = new String[individus.size()];
+
+        for (int i = 0; i < individus.size(); i++) {
+            indivs[i] = individus.get(i).getPrenom() + " " + individus.get(i).getNom();
+        }
+
+        SideComboBox indiv = createDropdownLateral("Responsable", indivs, 430, true);
+        indiv.setSelectedItem(batiment.getResponsable().getPrenom() + " " + batiment.getResponsable().getNom());
+
+        SideSaveButton save = new SideSaveButton(this, batiment, fields);
+        SideCancelButton cancel = new SideCancelButton(this, batiment);
+
     }
 
     public void newSalle(A38Object filter) {
