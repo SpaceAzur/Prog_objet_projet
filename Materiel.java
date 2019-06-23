@@ -93,4 +93,8 @@ public class Materiel extends A38Object {
         this.nature = nature;
     }
 
+    public String getNature() {
+        return this.nature;
+    }
+
 }

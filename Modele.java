@@ -116,6 +116,7 @@ public class Modele {
                 t.setPrixAchat(rs.getDouble("prixachat"));
                 t.setDateAchat(dateF.parse(rs.getString("dateachat")));
                 t.setEtat(rs.getString("etat"));
+                t.setNature(rs.getString("nature"));
                 Armoire armoire = getArmoire(rs.getInt("armoire"));
                 t.setArmoire(armoire);
 
@@ -243,8 +244,6 @@ public class Modele {
         }
 
     }
-
-
 
     ///// SAUVEGARDE /////
 
@@ -423,8 +422,6 @@ public class Modele {
 
     }
 
-
-
     ///// GETTERS /////
 
     /// EMPRUNTS ///
@@ -466,6 +463,8 @@ public class Modele {
             if (filter instanceof Batiment && mat.getArmoire().getLocalisation().getLocalisation() == filter)
                 result.add(mat);
             if (filter instanceof Salle && mat.getArmoire().getLocalisation() == filter)
+                result.add(mat);
+            if (filter instanceof Emprunt && ((Emprunt) filter).getMateriel() == mat)
                 result.add(mat);
         }
 
@@ -591,8 +590,6 @@ public class Modele {
 
     }
 
-
-
     ///// SUPPRESSION /////
 
     public void deleteObject(A38Object obj) {
@@ -614,15 +611,20 @@ public class Modele {
 
     }
 
-    public void deleteIndividu(Individu indiv) {}
+    public void deleteIndividu(Individu indiv) {
+    }
 
-    public void deleteEmprunt(Emprunt emp) {}
+    public void deleteEmprunt(Emprunt emp) {
+    }
 
-    public void deleteBatiment(Batiment bat) {}
+    public void deleteBatiment(Batiment bat) {
+    }
 
-    public void deleteSalle(Salle salle) {}
+    public void deleteSalle(Salle salle) {
+    }
 
-    public void deleteArmoire(Armoire armoire) {}
+    public void deleteArmoire(Armoire armoire) {
+    }
 
     public void deleteInstitution(Institution per) {
 

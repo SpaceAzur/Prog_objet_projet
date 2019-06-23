@@ -16,7 +16,7 @@ public class MaterielComboControl implements ItemListener {
             if (item instanceof String) {
                 String s = (String) item;
                 if (s.equals("terminaux")) {
-                    side.showTerminalOptions();
+                    side.showTerminalOptions(null);
                 }
             }
         }

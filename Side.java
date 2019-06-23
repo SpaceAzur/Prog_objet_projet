@@ -1,5 +1,7 @@
 import java.awt.Color;
 import java.awt.Insets;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -15,6 +17,7 @@ public class Side extends JPanel {
     SideControl sctrl;
     ArrayList<JComponent> fields;
     JLabel title;
+    DateFormat dateF = new SimpleDateFormat("dd/MM/yyyy");
 
     public Side(Interface interf) {
 
@@ -110,7 +113,7 @@ public class Side extends JPanel {
         SideLabel proprio = new SideLabel("Propriétaire : " + mat.getProprietaire().getRaisonSociale(), this, 50, 180);
         SideLabel marque = new SideLabel("Marque : " + mat.getMarque(), this, 50, 210);
         SideLabel prix = new SideLabel("Prix : " + mat.getPrixAchat(), this, 50, 240);
-        SideLabel date = new SideLabel("<html>Date d'achat : <br>" + mat.getDateAchat() + "</html>", this, 50, 270);
+        SideLabel date = new SideLabel("<html>Date d'achat : <br>" + dateF.format(mat.getDateAchat()) + "</html>", this, 50, 270);
         SideLabel etat = new SideLabel("Etat : " + mat.getEtat(), this, 50, 330);
         SideLabel connec = new SideLabel("Connectique : " + mat.getConnectique(), this, 50, 360);
         if (mat instanceof Terminal) {
@@ -135,6 +138,8 @@ public class Side extends JPanel {
         String statuts = emprunt.isRendu() ? "Rendu" : "Non rendu";
         SideLabel statut = new SideLabel("Statut : " + statuts, this, 50, 360);
         SideLabel raison = new SideLabel("Raison : " + emprunt.getRaison(), this, 50, 390);
+
+        SideButton mat = new SideButton(emprunt, interf.menu.materiels, this, 215, 600);
 
         addButtons(emprunt);
 
@@ -226,32 +231,15 @@ public class Side extends JPanel {
         return combo;
     }
 
-    public void editInstitution(Institution institution) {
+    
 
-        setTitle(institution.getRaisonSociale());
-
-        fields.clear();
-
-        SideLabel idl = new SideLabel("ID : " + institution.getId(), this, 50, 150);
-
-        createField("Raison sociale", institution.getRaisonSociale(), 200);
-        createField("Adresse", institution.getAdresse(), 280);
-        createField("Mail", institution.getEmail(), 360);
-        createField("Téléphone", institution.getTelephone(), 440);
-
-        SideSaveButton save = new SideSaveButton(this, institution, fields);
-        SideCancelButton cancel = new SideCancelButton(this, institution);
-
-    }
-
-    public void editMateriel(Materiel materiel) {
+    public void editBatiment(Batiment batiment) {
     }
 
     public void editEmprunt(Emprunt emprunt) {
     }
 
-    public void editBatiment(Batiment batiment) {
-    }
+    
 
     public void editSalle(Salle salle) {
     }
@@ -296,12 +284,44 @@ public class Side extends JPanel {
 
     }
 
-    public void showTerminalOptions() {
+    public void editMateriel(Materiel materiel) {
 
-        createFieldLateral("OS", "", 395, false);
-        createFieldLateral("Taille écran", "", 435, true);
-        createFieldLateral("Résolution X", "", 475, true);
-        createFieldLateral("Résolution Y", "", 515, true);
+        setTitle(materiel.getModele());
+        title.setLocation((int) title.getLocation().getX(), 15);
+
+        fields.clear();
+
+        SideLabel idl = new SideLabel("ID : " + materiel.getId(), this, 50, 75);
+
+        ArrayList<Institution> institutions = new ArrayList<Institution>(interf.mod.getInstitutions().values());
+        String[] proprietaires = new String[institutions.size()];
+        for (int i = 0; i < institutions.size(); i++) {
+            proprietaires[i] = institutions.get(i).getRaisonSociale();
+        }
+
+        SideComboBox proprio = createDropdownLateral("Propriétaire", proprietaires, 115, true);
+        proprio.setSelectedItem(materiel.getProprietaire().getRaisonSociale());
+
+        createFieldLateral("Nature", materiel.getNature(), 155, false);
+        createFieldLateral("Modèle", materiel.getModele(), 195, false);
+        createFieldLateral("Marque", materiel.getMarque(), 235, false);
+        createFieldLateral("Prix d'achat", Double.toString(materiel.getPrixAchat()), 275, true);
+        createFieldLateral("Date d'achat", dateF.format(materiel.getDateAchat()), 315, true);
+        createFieldLateral("Etat", materiel.getEtat(), 355, false);
+
+        if (materiel instanceof Terminal) showTerminalOptions((Terminal) materiel);
+
+        SideSaveButton save = new SideSaveButton(this, null, fields);
+        SideCancelButton cancel = new SideCancelButton(this, materiel);
+
+    }
+
+    public void showTerminalOptions(Terminal t) {
+
+        createFieldLateral("OS", t == null ? "" : t.getOS(), 395, false);
+        createFieldLateral("Taille écran", t == null ? "" : Double.toString(t.getTailleEcran()), 435, true);
+        createFieldLateral("Résolution X", t == null ? "" : Integer.toString(t.getXResolution()), 475, true);
+        createFieldLateral("Résolution Y", t == null ? "" : Integer.toString(t.getYResolution()), 515, true);
         repaint();
 
     }
@@ -318,6 +338,24 @@ public class Side extends JPanel {
         createField("Téléphone", "", 440);
 
         SideSaveButton save = new SideSaveButton(this, null, fields);
+
+    }
+
+    public void editInstitution(Institution institution) {
+
+        setTitle(institution.getRaisonSociale());
+
+        fields.clear();
+
+        SideLabel idl = new SideLabel("ID : " + institution.getId(), this, 50, 150);
+
+        createField("Raison sociale", institution.getRaisonSociale(), 200);
+        createField("Adresse", institution.getAdresse(), 280);
+        createField("Mail", institution.getEmail(), 360);
+        createField("Téléphone", institution.getTelephone(), 440);
+
+        SideSaveButton save = new SideSaveButton(this, institution, fields);
+        SideCancelButton cancel = new SideCancelButton(this, institution);
 
     }
 
