@@ -5,9 +5,9 @@ import javax.swing.*;
 
 public class DeleteButton extends JPanel {
 
-    private Object item;
+    private A38Object item;
 
-    public DeleteButton(Side side, Object o) {
+    public DeleteButton(Side side, A38Object o) {
 
         this.setSize(40,40);
         this.setLocation(350,10);
@@ -29,7 +29,7 @@ public class DeleteButton extends JPanel {
         
     }
 
-    public Object getItem() {
+    public A38Object getItem() {
         return this.item;
     }
 

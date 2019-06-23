@@ -3,6 +3,8 @@ import java.awt.Insets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
@@ -96,7 +98,8 @@ public class Side extends JPanel {
         SideLabel adresse = new SideLabel("<html>Adresse : <br>" + indiv.getAdresse() + "</html>", this, 50, 250);
         SideLabel email = new SideLabel("<html>Mail : <br>" + indiv.getEmail() + "</html>", this, 50, 330);
         SideLabel telephone = new SideLabel("Tel : " + indiv.getTelephone(), this, 50, 410);
-        SideLabel institution = new SideLabel("<html>Institution : <br>" + indiv.getInstitution().getRaisonSociale(), this, 50, 460);
+        SideLabel institution = new SideLabel("<html>Institution : <br>" + indiv.getInstitution().getRaisonSociale(),
+                this, 50, 460);
 
         SideButton materiel = new SideButton(indiv, interf.menu.emprunts, this, 25, 600);
         SideButton batiment = new SideButton(indiv, interf.menu.batiments, this, 215, 600);
@@ -113,15 +116,19 @@ public class Side extends JPanel {
         SideLabel proprio = new SideLabel("Propriétaire : " + mat.getProprietaire().getRaisonSociale(), this, 50, 180);
         SideLabel marque = new SideLabel("Marque : " + mat.getMarque(), this, 50, 210);
         SideLabel prix = new SideLabel("Prix : " + mat.getPrixAchat(), this, 50, 240);
-        SideLabel date = new SideLabel("<html>Date d'achat : <br>" + dateF.format(mat.getDateAchat()) + "</html>", this, 50, 270);
+        SideLabel date = new SideLabel("<html>Date d'achat : <br>" + dateF.format(mat.getDateAchat()) + "</html>", this,
+                50, 270);
         SideLabel etat = new SideLabel("Etat : " + mat.getEtat(), this, 50, 330);
         SideLabel connec = new SideLabel("Connectique : " + mat.getConnectique(), this, 50, 360);
         if (mat instanceof Terminal) {
             Terminal ter = (Terminal) mat;
-            SideLabel os = new SideLabel("OS : " + ter.getOS() , this, 50, 390);
+            SideLabel os = new SideLabel("OS : " + ter.getOS(), this, 50, 390);
             SideLabel taille = new SideLabel("Ecran(\") : " + ter.getTailleEcran(), this, 50, 420);
-            SideLabel reso = new SideLabel("Resolution : " + ter.getXResolution() + "*" + ter.getYResolution(), this, 50, 450);
+            SideLabel reso = new SideLabel("Resolution : " + ter.getXResolution() + "*" + ter.getYResolution(), this,
+                    50, 450);
         }
+
+        SideButton emp = new SideButton(mat, interf.menu.emprunts, this, 215, 600);
 
         addButtons(mat);
 
@@ -131,10 +138,12 @@ public class Side extends JPanel {
 
         setTitle("Emprunt n°" + emprunt.getId());
 
-        SideLabel debut = new SideLabel("<html>Début :<br>" + emprunt.getDebut() + "</html>", this, 50, 150);
-        SideLabel fin = new SideLabel("<html>Fin :<br>" + emprunt.getFin() + "</html>", this, 50, 210);
+        SideLabel debut = new SideLabel("<html>Début :<br>" + dateF.format(emprunt.getDebut()) + "</html>", this, 50,
+                150);
+        SideLabel fin = new SideLabel("<html>Fin :<br>" + dateF.format(emprunt.getFin()) + "</html>", this, 50, 210);
         SideLabel materiel = new SideLabel("Matériel : " + emprunt.getMateriel().getModele(), this, 50, 270);
-        SideLabel emprunteur = new SideLabel("<html>Emprunteur : <br>" + emprunt.getEmprunteur().getPrenom() + " " + emprunt.getEmprunteur().getNom(), this, 50, 300);
+        SideLabel emprunteur = new SideLabel("<html>Emprunteur : <br>" + emprunt.getEmprunteur().getPrenom() + " "
+                + emprunt.getEmprunteur().getNom(), this, 50, 300);
         String statuts = emprunt.isRendu() ? "Rendu" : "Non rendu";
         SideLabel statut = new SideLabel("Statut : " + statuts, this, 50, 360);
         SideLabel raison = new SideLabel("Raison : " + emprunt.getRaison(), this, 50, 390);
@@ -150,10 +159,13 @@ public class Side extends JPanel {
         setTitle(batiment.getNom());
 
         SideLabel idl = new SideLabel("ID : " + batiment.getId(), this, 50, 150);
-        SideLabel proprio = new SideLabel("Propriétaire : " + batiment.getProprietaire().getRaisonSociale(), this, 50, 200);
+        SideLabel proprio = new SideLabel("Propriétaire : " + batiment.getProprietaire().getRaisonSociale(), this, 50,
+                200);
         SideLabel adresse = new SideLabel("Adresse : " + batiment.getAdresse(), this, 50, 250);
-        SideLabel respo = new SideLabel("Responsable : " + batiment.getResponsable().getPrenom() + " " + batiment.getResponsable().getNom(), this, 50, 300);
-        
+        SideLabel respo = new SideLabel(
+                "Responsable : " + batiment.getResponsable().getPrenom() + " " + batiment.getResponsable().getNom(),
+                this, 50, 300);
+
         SideButton salle = new SideButton(batiment, interf.menu.salles, this, 215, 600);
         SideButton armoire = new SideButton(batiment, interf.menu.armoires, this, 25, 600);
         SideButton materiel = new SideButton(batiment, interf.menu.materiels, this, 215, 520);
@@ -170,7 +182,7 @@ public class Side extends JPanel {
         SideLabel batiment = new SideLabel("Batiment : " + salle.getLocalisation().getNom(), this, 50, 200);
         SideLabel etage = new SideLabel("Etage : " + salle.getEtage(), this, 50, 250);
         SideLabel surface = new SideLabel("Surface : " + salle.getSurface(), this, 50, 300);
-        
+
         SideButton armoire = new SideButton(salle, interf.menu.armoires, this, 25, 600);
         SideButton materiel = new SideButton(salle, interf.menu.materiels, this, 215, 600);
 
@@ -184,7 +196,8 @@ public class Side extends JPanel {
 
         SideLabel idl = new SideLabel("ID : " + armoire.getId(), this, 50, 150);
         SideLabel salle = new SideLabel("Salle : " + armoire.getLocalisation().getNom(), this, 50, 200);
-        SideLabel bat = new SideLabel("Batiment : " + armoire.getLocalisation().getLocalisation().getNom(), this, 50, 250);
+        SideLabel bat = new SideLabel("Batiment : " + armoire.getLocalisation().getLocalisation().getNom(), this, 50,
+                250);
 
         SideButton materiel = new SideButton(armoire, interf.menu.materiels, this, 215, 600);
 
@@ -231,15 +244,47 @@ public class Side extends JPanel {
         return combo;
     }
 
-    
-
     public void editBatiment(Batiment batiment) {
     }
 
     public void editEmprunt(Emprunt emprunt) {
-    }
 
-    
+        setTitle("Emprunt n°" + emprunt.getId());
+
+        fields.clear();
+
+        ArrayList<Individu> individus = interf.mod.getIndividus(null);
+        String[] indivs = new String[individus.size()];
+
+        for (int i = 0; i < individus.size(); i++) {
+            indivs[i] = individus.get(i).getPrenom() + " " + individus.get(i).getNom();
+        }
+
+        SideComboBox emprunteur = createDropdownLateral("Emprunteur", indivs, 185, true);
+        emprunteur.setSelectedItem(emprunt.getEmprunteur().getPrenom() + " " + emprunt.getEmprunteur().getNom());
+
+        ArrayList<Materiel> materiels = interf.mod.getMateriels(null);
+        String[] matos = new String[materiels.size()];
+
+        for (int i = 0; i < materiels.size(); i++) {
+            matos[i] = materiels.get(i).getMarque() + " " + materiels.get(i).getModele() + " ("
+                    + materiels.get(i).getId() + ")";
+        }
+
+        SideComboBox materiel = createDropdownLateral("Materiel", matos, 235, false);
+        materiel.setSelectedItem(emprunt.getMateriel().getMarque() + " " + emprunt.getMateriel().getModele() + " (" + emprunt.getMateriel().getId() + ")");
+
+        createFieldLateral("Date de début", dateF.format(emprunt.getDebut()), 285, true);
+        createFieldLateral("Date de fin", dateF.format(emprunt.getFin()), 335, true);
+        createFieldLateral("Raison", emprunt.getRaison(), 385, true);
+        SideComboBox rendu = createDropdownLateral("Rendu", new String[] { "Oui", "Non" }, 435, true);
+        String renduS = emprunt.isRendu() ? "Oui" : "Non";
+        rendu.setSelectedItem(renduS);
+
+        SideSaveButton save = new SideSaveButton(this, emprunt, fields);
+        SideCancelButton cancel = new SideCancelButton(this, emprunt);
+
+    }
 
     public void editSalle(Salle salle) {
     }
@@ -251,6 +296,51 @@ public class Side extends JPanel {
     }
 
     public void newEmprunt(A38Object filter) {
+
+        setTitle("Nouvel emprunt");
+
+        fields.clear();
+
+        ArrayList<Individu> individus = interf.mod.getIndividus(null);
+        String[] indivs = new String[individus.size()];
+
+        for (int i = 0; i < individus.size(); i++) {
+            indivs[i] = individus.get(i).getPrenom() + " " + individus.get(i).getNom();
+        }
+
+        SideComboBox emprunteur = createDropdownLateral("Emprunteur", indivs, 185, true);
+        if (filter instanceof Individu) {
+            Individu ind = (Individu) filter;
+            emprunteur.setSelectedItem(ind.getPrenom() + " " + ind.getNom());
+        }
+
+        ArrayList<Materiel> materiels = interf.mod.getMateriels(null);
+        String[] matos = new String[materiels.size()];
+
+        for (int i = 0; i < materiels.size(); i++) {
+            matos[i] = materiels.get(i).getMarque() + " " + materiels.get(i).getModele() + " ("
+                    + materiels.get(i).getId() + ")";
+        }
+
+        SideComboBox materiel = createDropdownLateral("Materiel", matos, 235, false);
+        if (filter instanceof Materiel) {
+            Materiel mater = (Materiel) filter;
+            materiel.setSelectedItem(mater.getMarque() + " " + mater.getModele() + " (" + mater.getId() + ")");
+        }
+
+        Date today = Calendar.getInstance().getTime();
+        Calendar tom = Calendar.getInstance();
+        tom.setTime(today);
+        tom.add(Calendar.DATE, 1);
+        Date tomorrow=tom.getTime();
+
+        createFieldLateral("Date de début", dateF.format(today), 285, true);
+        createFieldLateral("Date de fin", dateF.format(tomorrow), 335, true);
+        createFieldLateral("Raison", "", 385, true);
+        SideComboBox rendu = createDropdownLateral("Rendu", new String[] { "Oui", "Non" }, 435, true);
+
+        SideSaveButton save = new SideSaveButton(this, null, fields);
+
     }
 
     public void newMateriel(A38Object filter) {
@@ -309,9 +399,10 @@ public class Side extends JPanel {
         createFieldLateral("Date d'achat", dateF.format(materiel.getDateAchat()), 315, true);
         createFieldLateral("Etat", materiel.getEtat(), 355, false);
 
-        if (materiel instanceof Terminal) showTerminalOptions((Terminal) materiel);
+        if (materiel instanceof Terminal)
+            showTerminalOptions((Terminal) materiel);
 
-        SideSaveButton save = new SideSaveButton(this, null, fields);
+        SideSaveButton save = new SideSaveButton(this, materiel, fields);
         SideCancelButton cancel = new SideCancelButton(this, materiel);
 
     }

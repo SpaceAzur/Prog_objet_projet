@@ -24,6 +24,17 @@ public class Emprunt extends A38Object {
         this.id=id;
     }
 
+    public void setAll(Date debut, Date fin, String raison, boolean rendu, Individu emprunteur, Materiel materiel) {
+
+        this.debut=debut;
+        this.fin=fin;
+        this.raison=raison;
+        this.rendu=rendu;
+        this.emprunteur=emprunteur;
+        this.materiel=materiel;
+        
+    }
+
     public Date getDebut() {
         return this.debut;
     }

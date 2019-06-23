@@ -59,6 +59,7 @@ public class Center extends JPanel {
         panneau.setLocation(0, 0);
         panneau.getViewport().setBackground(interf.blue);
         this.add(panneau);
+        repaint();
 
     }
 

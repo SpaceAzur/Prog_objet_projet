@@ -68,6 +68,7 @@ public class Interface {
 
     public void showObject(A38Object obj) {
 
+        System.out.println("plouf");
         side.removeAll();
         if (obj instanceof Individu)
             side.showIndividu((Individu) obj);

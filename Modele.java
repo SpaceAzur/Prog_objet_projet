@@ -247,7 +247,7 @@ public class Modele {
 
     ///// SAUVEGARDE /////
 
-    public A38Object save(A38Object obj, Map<String, String> values, String type) throws SQLException, ParseException {
+    public A38Object save(A38Object obj, Map<String, String> values, String type) throws SQLException, ParseException, Exception {
 
         A38Object result = null;
 
@@ -341,6 +341,7 @@ public class Modele {
         Materiel mat = null;
 
         if (obj != null) {
+            type = obj instanceof Terminal ? new String("terminaux") : new String("peripheriques");
             ps = conn.prepareStatement(
                     "UPDATE materiels SET proprietaire=?, nature=?, modele=?, marque=?, prixachat=?, dateachat=?, etat=?, type=?, OS=?, tailleecran=?, xresolution=?, yresolution=? WHERE id=?");
         } else {
@@ -418,7 +419,63 @@ public class Modele {
 
     }
 
-    public void saveEmprunt(Emprunt obj, Map<String, String> values) {
+    public Emprunt saveEmprunt(Emprunt obj, Map<String, String> values) throws SQLException, ParseException, Exception {
+
+        int idEmprunteur = getIndividu(values.get("Emprunteur")).getId();
+        int idMateriel = Integer.valueOf(values.get("Materiel").split("[\\(\\)]")[1]);
+        String debut = values.get("Date de début");
+        String fin = values.get("Date de fin");
+        String raison = values.get("Raison");
+        boolean rendu = values.get("Rendu").equals("Oui");
+
+        if (dateF.parse(debut).after(dateF.parse(fin))) {
+            throw new Exception("Date de début incohérente");
+        }
+
+        PreparedStatement ps;
+
+        Emprunt emp = null;
+
+        if (obj != null) {
+            ps = conn.prepareStatement(
+                    "UPDATE emprunts SET datedebut=?, datefin=?, raison=?, rendu=?, idemprunteur=?, materiel=? WHERE numemprunt=?");
+            emp = obj;
+        } else
+            ps = conn.prepareStatement(
+                    "INSERT INTO emprunts(datedebut, datefin, raison, rendu, idemprunteur, materiel) VALUES(?,?,?,?,?,?)",
+                    Statement.RETURN_GENERATED_KEYS);
+
+        ps.setString(1, debut);
+        ps.setString(2, fin);
+        ps.setString(3, raison);
+        ps.setBoolean(4, rendu);
+        ps.setInt(5, idEmprunteur);
+        ps.setInt(6, idMateriel);
+    
+        if (obj != null)
+            ps.setInt(7, obj.getId());
+
+        int affectedRows = ps.executeUpdate();
+
+        if (affectedRows == 0)
+            throw new SQLException("Creation/update failed, no rows affected.");
+
+        if (obj != null)
+            emp.setAll(dateF.parse(debut), dateF.parse(fin), raison, rendu, getIndividu(idEmprunteur), getMateriel(idMateriel));
+
+        else {
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int id = generatedKeys.getInt(1);
+                    emprunts.put(id, new Emprunt(id,dateF.parse(debut), dateF.parse(fin), raison, rendu, getIndividu(idEmprunteur), getMateriel(idMateriel) ) );
+                    emp = getEmprunt(id);
+                } else {
+                    throw new SQLException("Creating user failed, no ID obtained.");
+                }
+            }
+        }
+
+        return emp;
 
     }
 
@@ -437,6 +494,8 @@ public class Modele {
             if (filter instanceof Individu && emp.getEmprunteur() == filter)
                 result.add(emp);
             if (filter instanceof Institution && emp.getMateriel().getProprietaire() == filter)
+                result.add(emp);
+            if (filter instanceof Materiel && emp.getMateriel() == filter)
                 result.add(emp);
         }
         return result;
@@ -495,6 +554,16 @@ public class Modele {
 
     public Individu getIndividu(int id) {
         return individus.get(id);
+    }
+
+    public Individu getIndividu(String prenomnom) {
+
+        for (Individu individu : individus.values()) {
+            if ((individu.getPrenom() + " " + individu.getNom()).equals(prenomnom))
+                return individu;
+        }
+        return null;
+
     }
 
     /// BATIMENTS ///
@@ -615,6 +684,17 @@ public class Modele {
     }
 
     public void deleteEmprunt(Emprunt emp) {
+
+        PreparedStatement ps = null;
+        try {
+            ps = conn.prepareStatement("DELETE FROM emprunts WHERE numemprunt=?");
+            ps.setInt(1, emp.getId());
+            ps.executeUpdate();
+            emprunts.remove(emp.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void deleteBatiment(Batiment bat) {
