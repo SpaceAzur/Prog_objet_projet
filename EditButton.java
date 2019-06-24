@@ -1,3 +1,5 @@
+package a38;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.image.BufferedImage;

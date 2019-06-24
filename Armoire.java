@@ -1,3 +1,5 @@
+package a38;
+
 import java.util.ArrayList;
 
 public class Armoire extends A38Object {

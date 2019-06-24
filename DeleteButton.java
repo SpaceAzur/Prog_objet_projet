@@ -1,3 +1,5 @@
+package a38;
+
 import java.awt.Color;
 
 import javax.imageio.ImageIO;

@@ -1,3 +1,5 @@
+package a38;
+
 public class Personne extends A38Object {
 
     protected String adresse;

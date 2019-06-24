@@ -1,3 +1,5 @@
+package a38;
+
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;

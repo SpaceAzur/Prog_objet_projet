@@ -1,3 +1,5 @@
+package a38;
+
 public class A38Object {
 
     protected int id;

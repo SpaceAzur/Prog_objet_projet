@@ -1,3 +1,5 @@
+package a38;
+
 import java.sql.*;
 
 public class A38 {

@@ -1,3 +1,5 @@
+package a38;
+
 import java.awt.*;
 import javax.swing.*;
 
@@ -50,7 +52,7 @@ public class Interface {
         fenetre.setVisible(true);
 
         showObjects("Institutions", null);
-        editItem(mod.getInstitution(2));
+        showObject(mod.getInstitution(1));
 
     }
 

@@ -1,3 +1,5 @@
+package a38;
+
 import java.util.ArrayList;
 
 public class Salle extends A38Object {

@@ -1,3 +1,5 @@
+package a38;
+
 public class Individu extends Personne {
 
     protected String prenom;

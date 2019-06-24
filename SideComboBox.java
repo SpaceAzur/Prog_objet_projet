@@ -1,3 +1,5 @@
+package a38;
+
 import javax.swing.JComboBox;
 
 public class SideComboBox extends JComboBox<String> {

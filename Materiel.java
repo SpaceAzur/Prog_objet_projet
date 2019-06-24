@@ -1,3 +1,5 @@
+package a38;
+
 import java.util.Date;
 
 public class Materiel extends A38Object {
