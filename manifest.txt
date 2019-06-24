@@ -1,3 +1,2 @@
 Main-Class: a38.A38
-Class-Path: A38.jar
-Class-Path: sqlite-jdbc-3.27.2.1.jar
+Class-Path: a38/ org/

@@ -11,11 +11,11 @@ public class Materiel extends A38Object {
     protected double prixAchat;
     protected Date dateAchat;
     protected String etat;
-    protected String[] connectique;
+    protected String connectique;
     protected Armoire armoire;
 
     public void setAll(Institution proprio, String modele, String nature, String marque, double prixAchat,
-            Date dateAchat, String etat) {
+            Date dateAchat, String etat, String conn) {
 
                 this.proprietaire=proprio;
                 this.modele=modele;
@@ -24,6 +24,7 @@ public class Materiel extends A38Object {
                 this.prixAchat=prixAchat;
                 this.dateAchat=dateAchat;
                 this.etat=etat;
+                this.connectique=conn;
 
     }
 
@@ -83,11 +84,11 @@ public class Materiel extends A38Object {
         this.etat = etat;
     }
 
-    public String[] getConnectique() {
+    public String getConnectique() {
         return this.connectique;
     }
 
-    public void setConnectique(String[] connectique) {
+    public void setConnectique(String connectique) {
         this.connectique = connectique;
     }
 

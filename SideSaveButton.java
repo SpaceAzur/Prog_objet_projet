@@ -19,7 +19,7 @@ public class SideSaveButton extends JPanel {
     public SideSaveButton(Side side, A38Object obj, ArrayList<JComponent> fields) {
         
         this.setSize(125,65);
-        this.setLocation(50, 580);
+        this.setLocation(50, 590);
         this.setBackground(Color.GREEN);
         this.setLayout(null);
         this.obj=obj;

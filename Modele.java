@@ -121,6 +121,7 @@ public class Modele {
                 t.setDateAchat(dateF.parse(rs.getString("dateachat")));
                 t.setEtat(rs.getString("etat"));
                 t.setNature(rs.getString("nature"));
+                t.setConnectique(rs.getString("connectique"));
                 Armoire armoire = getArmoire(rs.getInt("armoire"));
                 t.setArmoire(armoire);
 
@@ -348,6 +349,7 @@ public class Modele {
         String taille = values.get("Taille écran");
         String xres = values.get("Résolution X");
         String yres = values.get("Résolution Y");
+        String connectiques = values.get("Connectique");
 
         PreparedStatement ps;
 
@@ -357,10 +359,10 @@ public class Modele {
             mat = obj;
             type = obj instanceof Terminal ? new String("terminaux") : new String("peripheriques");
             ps = conn.prepareStatement(
-                    "UPDATE materiels SET proprietaire=?, nature=?, modele=?, marque=?, prixachat=?, dateachat=?, etat=?, type=?, OS=?, tailleecran=?, xresolution=?, yresolution=? WHERE id=?");
+                    "UPDATE materiels SET proprietaire=?, nature=?, modele=?, marque=?, prixachat=?, dateachat=?, etat=?, type=?, OS=?, tailleecran=?, xresolution=?, yresolution=?, connectique=? WHERE id=?");
         } else {
             ps = conn.prepareStatement(
-                    "INSERT INTO materiels(proprietaire, nature, modele, marque, prixachat, dateachat, etat, type, OS, tailleecran, xresolution, yresolution) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
+                    "INSERT INTO materiels(proprietaire, nature, modele, marque, prixachat, dateachat, etat, type, OS, tailleecran, xresolution, yresolution, connectique) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS);
         }
 
@@ -376,8 +378,9 @@ public class Modele {
         ps.setString(10, taille);
         ps.setString(11, xres);
         ps.setString(12, yres);
+        ps.setString(13, connectiques);
         if (obj != null)
-            ps.setInt(13, obj.getId());
+            ps.setInt(14, obj.getId());
 
         int affectedRows = ps.executeUpdate();
 
@@ -385,7 +388,7 @@ public class Modele {
             throw new SQLException("Creation/update failed, no rows affected.");
 
         if (obj != null) {
-            obj.setAll(getInstitution(idProprio), modele, nature, marque, prix, dateF.parse(date), etat);
+            obj.setAll(getInstitution(idProprio), modele, nature, marque, prix, dateF.parse(date), etat, connectiques);
             if (obj instanceof Terminal) {
                 ((Terminal) obj).setOS(os);
                 ((Terminal) obj).setTailleEcran(Double.valueOf(taille));
@@ -407,7 +410,7 @@ public class Modele {
                     } else if (type.equals("peripheriques"))
                         mat = new Peripherique();
                     mat.setId(id);
-                    mat.setAll(getInstitution(idProprio), modele, nature, marque, prix, dateF.parse(date), etat);
+                    mat.setAll(getInstitution(idProprio), modele, nature, marque, prix, dateF.parse(date), etat, connectiques);
 
                     materiels.put(id, mat);
                 } else {

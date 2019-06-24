@@ -416,6 +416,7 @@ public class Side extends JPanel {
         createFieldLateral("Prix d'achat", "", 275, true);
         createFieldLateral("Date d'achat", "", 315, true);
         createFieldLateral("Etat", "", 355, false);
+        createFieldLateral("Connectique", "", 555, true);
 
         SideSaveButton save = new SideSaveButton(this, null, fields);
 
@@ -445,6 +446,7 @@ public class Side extends JPanel {
         createFieldLateral("Prix d'achat", Double.toString(materiel.getPrixAchat()), 275, true);
         createFieldLateral("Date d'achat", dateF.format(materiel.getDateAchat()), 315, true);
         createFieldLateral("Etat", materiel.getEtat(), 355, false);
+        createFieldLateral("Connectique", "", 555, true);
 
         if (materiel instanceof Terminal)
             showTerminalOptions((Terminal) materiel);

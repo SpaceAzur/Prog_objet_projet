@@ -16,7 +16,7 @@ public class SideCancelButton extends JPanel {
         this.obj=obj;
 
         this.setSize(125,65);
-        this.setLocation(225, 580);
+        this.setLocation(225, 590);
         this.setBackground(Color.RED);
         this.setLayout(null);
 
