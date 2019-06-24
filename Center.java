@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 
 import javax.swing.JComponent;
@@ -111,7 +112,7 @@ public class Center extends JPanel {
 
         ArrayList<Materiel> materiels = interf.mod.getMateriels(filter);
 
-        String[] colonnes = { "ID", "Marque", "Modele", "Etat" };
+        String[] colonnes = { "ID", "Marque", "Modele", "Disponible" };
         String[][] data = new String[materiels.size()][4];
 
         for (int i = 0; i < materiels.size(); i++) {
@@ -119,6 +120,13 @@ public class Center extends JPanel {
             data[i][1] = materiels.get(i).getMarque();
             data[i][2] = materiels.get(i).getModele();
             data[i][3] = materiels.get(i).getEtat();
+            ArrayList<Emprunt> emprunts = interf.mod.getEmprunts(materiels.get(i));
+            boolean isemprunte=false;
+            for (Emprunt emp : emprunts) {
+                if (!emp.isRendu())
+                    isemprunte=true;
+            }
+            data[i][3] = isemprunte ? "Non" : "Oui";
         }
 
         CenterTable table = new CenterTable(data, colonnes, interf, currentType);
@@ -130,7 +138,7 @@ public class Center extends JPanel {
 
     }
 
-    public void showEmprunts() { 
+    public void showEmprunts() {
 
         removeAll();
 
@@ -139,7 +147,7 @@ public class Center extends JPanel {
         String[] colonnes = { "ID", "Emprunteur", "Materiel", "Propriétaire", "Rendu" };
         Object[][] data = new String[emprunts.size()][5];
 
-        for (int i=0 ; i<emprunts.size() ; i++) {
+        for (int i = 0; i < emprunts.size(); i++) {
             data[i][0] = Integer.toString(emprunts.get(i).getId());
             data[i][1] = emprunts.get(i).getEmprunteur().getNom();
             data[i][2] = emprunts.get(i).getMateriel().getModele();
@@ -218,7 +226,7 @@ public class Center extends JPanel {
         removeAll();
 
         ArrayList<Salle> salles = interf.mod.getSalles(filter);
-        
+
         String[] colonnes = { "ID", "Nom", "Batiment", "Etage", "Surface" };
         String[][] data = new String[salles.size()][5];
 
