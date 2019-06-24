@@ -41,5 +41,9 @@ public class Armoire extends A38Object {
         return this.localisation;
     }
 
+    public void setLocalisation(Salle s) {
+        this.localisation=s;
+    }
+
 
 }

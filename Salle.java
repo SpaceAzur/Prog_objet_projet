@@ -21,6 +21,12 @@ public class Salle extends A38Object {
         this.armoires=new ArrayList<Armoire>();
     }
 
+    public void setAll(int etage, int surface, String nom, Batiment localisation) {
+        this.etage=etage;
+        this.surface=surface;
+        this.nom=nom;
+        this.localisation=localisation;
+    }
 
     public String getNom() {
         return this.nom;

@@ -312,12 +312,6 @@ public class Side extends JPanel {
 
     }
 
-    public void editSalle(Salle salle) {
-    }
-
-    public void editArmoire(Armoire armoire) {
-    }
-
     public void newIndividu(A38Object filter) {
 
         setTitle("Nouvelle personne");
@@ -569,9 +563,98 @@ public class Side extends JPanel {
     }
 
     public void newSalle(A38Object filter) {
+
+        setTitle("Nouvelle salle");
+
+        fields.clear();
+
+        createField("Nom", "", 200);
+        createField("Etage", "", 280);
+        createField("Surface", "", 360);
+
+        ArrayList<Batiment> batiments = interf.mod.getBatiments(null);
+        String[] bats = new String[batiments.size()];
+        for (int i = 0; i < batiments.size(); i++) {
+            bats[i] = batiments.get(i).getNom();
+        }
+        SideComboBox batiment = createDropdownLateral("Batiment", bats, 460, true);
+        if (filter instanceof Batiment) {
+            Batiment bat = (Batiment) filter;
+            batiment.setSelectedItem(bat.getNom());
+        }
+
+        SideSaveButton save = new SideSaveButton(this, null, fields);
+
     }
 
     public void newArmoire(A38Object filter) {
+
+        setTitle("Nouvelle armoire");
+
+        fields.clear();
+
+        createField("Nom", "", 200);
+
+        ArrayList<Salle> salles = interf.mod.getSalles(null);
+        String[] sals = new String[salles.size()];
+        for (int i = 0; i < salles.size(); i++) {
+            sals[i] = salles.get(i).getNom() + " (" + salles.get(i).getId() + ")";
+        }
+        SideComboBox salle = createDropdownLateral("Salle", sals, 460, true);
+        if (filter instanceof Salle) {
+            Salle sal = (Salle) filter;
+            salle.setSelectedItem(sal.getNom() + " (" + sal.getId() + ")");
+        }
+
+        SideSaveButton save = new SideSaveButton(this, null, fields);
+
+    }
+
+    public void editArmoire(Armoire armoire) {
+
+        setTitle("Nouvelle armoire");
+
+        fields.clear();
+
+        SideLabel idl = new SideLabel("ID : " + armoire.getId(), this, 50, 150);
+
+        createField("Nom", armoire.getNom(), 200);
+
+        ArrayList<Salle> salles = interf.mod.getSalles(null);
+        String[] sals = new String[salles.size()];
+        for (int i = 0; i < salles.size(); i++) {
+            sals[i] = salles.get(i).getNom() + " (" + salles.get(i).getId() + ")";
+        }
+        SideComboBox salle = createDropdownLateral("Salle", sals, 460, true);
+            salle.setSelectedItem(armoire.getLocalisation().getNom() + " (" + armoire.getLocalisation().getId() + ")");
+
+        SideSaveButton save = new SideSaveButton(this, null, fields);
+        
+    }
+
+    public void editSalle(Salle salle) {
+
+        setTitle("Nouvelle salle");
+
+        fields.clear();
+
+        SideLabel idl = new SideLabel("ID : " + salle.getId(), this, 50, 150);
+
+        createField("Nom", salle.getNom(), 200);
+        createField("Etage", Integer.toString(salle.getEtage()), 280);
+        createField("Surface", Integer.toString(salle.getSurface()), 360);
+
+        ArrayList<Batiment> batiments = new ArrayList<Batiment>(interf.mod.getBatiments(null));
+        String[] bats = new String[batiments.size()];
+        for (int i = 0; i < batiments.size(); i++) {
+            bats[i] = batiments.get(i).getNom();
+        }
+        SideComboBox batiment = createDropdownLateral("Batiment", bats, 460, true);
+        batiment.setSelectedItem(salle.getLocalisation());
+
+        SideSaveButton save = new SideSaveButton(this, salle, fields);
+        SideCancelButton cancel = new SideCancelButton(this, salle);
+
     }
 
 }

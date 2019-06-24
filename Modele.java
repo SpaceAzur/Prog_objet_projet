@@ -352,7 +352,7 @@ public class Modele {
         Materiel mat = null;
 
         if (obj != null) {
-            mat=obj;
+            mat = obj;
             type = obj instanceof Terminal ? new String("terminaux") : new String("peripheriques");
             ps = conn.prepareStatement(
                     "UPDATE materiels SET proprietaire=?, nature=?, modele=?, marque=?, prixachat=?, dateachat=?, etat=?, type=?, OS=?, tailleecran=?, xresolution=?, yresolution=? WHERE id=?");
@@ -459,7 +459,8 @@ public class Modele {
             try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     int id = generatedKeys.getInt(1);
-                    batiments.put(id, new Batiment(id, ad, nom, getInstitution(values.get("Propriétaire")), getIndividu(values.get("Responsable"))));
+                    batiments.put(id, new Batiment(id, ad, nom, getInstitution(values.get("Propriétaire")),
+                            getIndividu(values.get("Responsable"))));
                     bat = batiments.get(id);
                 } else {
                     throw new SQLException("Creating object failed, no ID obtained.");
@@ -473,13 +474,105 @@ public class Modele {
 
     public Armoire saveArmoire(Armoire obj, Map<String, String> values) throws SQLException {
 
-        return null;
+        String nom = values.get("Nom");
+        int salle = Integer.valueOf(values.get("Salle").split("[\\(\\)]")[1]);
+
+        PreparedStatement ps;
+
+        Armoire arm = null;
+
+        if (obj != null) {
+            ps = conn.prepareStatement("UPDATE armoires SET nom=?, salle=? WHERE id=?");
+            arm = obj;
+        } else
+            ps = conn.prepareStatement("INSERT INTO armoires(nom, salle) VALUES(?,?)", Statement.RETURN_GENERATED_KEYS);
+
+        ps.setString(1, nom);
+        ps.setInt(2, salle);
+
+        if (obj != null)
+            ps.setInt(3, obj.getId());
+
+        int affectedRows = ps.executeUpdate();
+
+        if (affectedRows == 0)
+            throw new SQLException("Creation/update failed, no rows affected.");
+
+        if (obj != null) {
+            obj.setNom(nom);
+            obj.getLocalisation().removeArmoire(obj);
+            obj.setLocalisation(getSalle(salle));
+            getSalle(salle).addArmoire(obj);
+        }
+
+        else {
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int id = generatedKeys.getInt(1);
+                    armoires.put(id, new Armoire(id, nom, getSalle(salle)));
+                    getSalle(salle).addArmoire(armoires.get(id));
+                    arm = armoires.get(id);
+                } else {
+                    throw new SQLException("Creating object failed, no ID obtained.");
+                }
+            }
+        }
+
+        return arm;
 
     }
 
     public Salle saveSalle(Salle obj, Map<String, String> values) throws SQLException {
 
-        return null;
+        int num = Integer.valueOf(values.get("Num"));
+        int etage = Integer.valueOf(values.get("Etage"));
+        int surface = Integer.valueOf(values.get("Surface"));
+        int bat = getBatiment(values.get("Batiment")).getId();
+
+        PreparedStatement ps;
+
+        Salle salle = null;
+
+        if (obj != null) {
+            ps = conn.prepareStatement("UPDATE salles SET numsalle=?, etage=?, surface=?, batiment=? WHERE id=?");
+            salle = obj;
+        } else
+            ps = conn.prepareStatement("INSERT INTO salles(numsalle, etage, surface, batiment) VALUES(?,?,?,?)",
+                    Statement.RETURN_GENERATED_KEYS);
+
+        ps.setInt(1, num);
+        ps.setInt(2, etage);
+        ps.setInt(3, surface);
+        ps.setInt(4, bat);
+
+        if (obj != null)
+            ps.setInt(5, obj.getId());
+
+        int affectedRows = ps.executeUpdate();
+
+        if (affectedRows == 0)
+            throw new SQLException("Creation/update failed, no rows affected.");
+
+        if (obj != null) {
+            obj.getLocalisation().removeSalle(obj);
+            obj.setAll(etage, surface, Integer.toString(num), getBatiment(bat));
+            getBatiment(bat).addSalle(obj);
+        }
+
+        else {
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int id = generatedKeys.getInt(1);
+                    salles.put(id, new Salle(id, etage, surface, Integer.toString(num), getBatiment(bat)));
+                    getBatiment(bat).addSalle(salles.get(id));
+                    salle = salles.get(id);
+                } else {
+                    throw new SQLException("Creating object failed, no ID obtained.");
+                }
+            }
+        }
+
+        return salle;
 
     }
 
@@ -644,9 +737,10 @@ public class Modele {
                 result.add(mat);
             if (filter instanceof Armoire && mat.getArmoire() == filter)
                 result.add(mat);
-            if (filter instanceof Batiment && mat.getArmoire().getLocalisation().getLocalisation() == filter)
+            if (filter instanceof Batiment && mat.getArmoire() != null
+                    && mat.getArmoire().getLocalisation().getLocalisation() == filter)
                 result.add(mat);
-            if (filter instanceof Salle && mat.getArmoire().getLocalisation() == filter)
+            if (filter instanceof Salle && mat.getArmoire() != null && mat.getArmoire().getLocalisation() == filter)
                 result.add(mat);
             if (filter instanceof Emprunt && ((Emprunt) filter).getMateriel() == mat)
                 result.add(mat);
@@ -713,6 +807,16 @@ public class Modele {
 
     public Batiment getBatiment(int id) {
         return batiments.get(id);
+    }
+
+    public Batiment getBatiment(String nom) {
+
+        for (Batiment batiment : batiments.values()) {
+            if ((batiment.getNom().equals(nom)))
+                return batiment;
+        }
+        return null;
+
     }
 
     /// SALLES ///
